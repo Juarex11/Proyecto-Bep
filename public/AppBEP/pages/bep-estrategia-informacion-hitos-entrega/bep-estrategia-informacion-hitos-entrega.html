@@ -1,0 +1,176 @@
+<div class="hentrega" x-data="hentrega()" x-init="automatico()">
+    <ul class="nav nav-pills">
+        <li class="nav-item me-1" onclick="routeTab('estrategiaInformacion_hitosConstruccion')">
+            <a class="nav-link"><i class="bi bi-building me-2"></i> Hitos de construcción</a>
+        </li>
+        <li class="nav-item me-1" onclick="routeTab('estrategiaInformacion_hitosEntrega')">
+            <a class="nav-link active"><i class="bi bi-send-check me-2"></i> Hitos de entrega de información</a>
+        </li>
+        <li class="nav-item me-1" onclick="routeTab('estrategiaInformacion_flujoTrabajo')">
+            <a class="nav-link"><i class="bi bi-arrow-repeat"></i> Flujo de trabajo</a>
+        </li>
+        <li class="nav-item me-1" onclick="routeTab('estrategiaInformacion_entornoComunDatos')">
+            <a class="nav-link"><i class="bi bi-cloud-arrow-up"></i> Entorno Común de Datos (CDE)</a>
+        </li>
+    </ul>
+    <div class="bg-grey p-3">
+        <div class="card card-bep card-agregar mb-3">
+            <div class="card-header d-flex align-items-center bg-white py-2 pointer" x-on:click="showNew = !showNew">
+                <span class="flex-grow-1 fw-semibold fs-13" :class="{'text-orange': showNew}"><i class="bi bi-plus-square me-2"></i> Agregar hitos de entrega de información</span>
+                <span x-show="!showNew"><i class="bi bi-chevron-down"></i></span>
+                <span x-show="showNew"><i class="bi bi-chevron-up"></i></span>
+            </div>
+            <div class="card-body" x-show="showNew">
+                <form @submit.prevent="guardarHEntrega()" @keydown.enter.prevent>
+                    <div class="mb-3 row">
+                        <label class="col-sm-2 col-form-label"><i class="bi bi-journal-check"></i> Nombre Entregable <span class="text-danger">*</span></label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" placeholder="Ingrese el nombre del entregable" name="EntInfNombre" x-model="campos.EntInfNombre" autocomplete="off" maxlength="255" required>
+                        </div>
+                    </div>
+                    <div class="mb-3 row">
+                        <label class="col-sm-2 col-form-label"><i class="bi bi-building"></i> Organización <span class="text-danger">*</span></label>
+                        <div class="col-sm-4">
+                            <select class="form-select" name="OrgBepId" x-model="campos.OrgBepId" required>
+                                <option value="">Seleccionar</option>
+                                <template x-for="(item, index) in organizaciones" :key="index">
+                                    <option :value="item.id" x-text="item.nombre"></option>
+                                </template>
+                            </select>
+                        </div>
+                        <label class="col-sm-2 col-form-label"><i class="bi bi-calendar-check"></i> Fecha de entrega <span class="text-danger">*</span></label>
+                        <div class="col-sm-4">
+                            <input type="date" class="form-control" name="EntInfFechaEntrega" x-model="campos.EntInfFechaEntrega" autocomplete="off" required>
+                        </div>
+                    </div>
+                    <div>
+                        <button type="submit" class="btn btn-orange btn-sm"><i class="bi bi-save"></i> Guardar</button>
+                        <button type="button" class="btn btn-secondary btn-sm" x-on:click="cancelarHEntrega()"><i class="bi bi-arrow-up-left-square"></i> Cancelar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="card p-3 border-0 rounded-0">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div class="fs-13">
+                    <div x-show="usoBep!='soloBEP'">
+                        <span class="text-orange fw-bold"><i class="bi bi-calendar-day"></i> Inicio Proyecto:</span>
+                        <span class="me-3" x-text="obtenerFechaAmericana(fechaInicioGantt, false)"></span>
+
+                        <span class="text-orange fw-bold"><i class="bi bi-calendar-check"></i> Fin Proyecto:</span>
+                        <span x-text="obtenerFechaAmericana(fechaFinGantt, false)"></span>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-end align-items-center ver">
+                    <button type="button" class="btn btn-outline-orange btn-xs me-2 btn-active-orange btn-lista" x-show="usoBep!='soloBEP'" x-on:click="verLista()"><i class="bi bi-list-nested"></i> Lista</button>
+                    <button type="button" class="btn btn-outline-orange btn-xs btn-gantt" x-on:click="verGantt()" x-show="validarFecha(fechaFinGantt) && usoBep!='soloBEP'"><i class="bi bi-bar-chart-steps"></i> Gantt</button>     
+                </div>
+            </div>
+            <template x-if="!showGantt && data.length > 0">
+                <table class="table mb-0">
+                    <thead class="bg-bep text-white">
+                        <tr>
+                            <td>Entregable</td>
+                            <td>Organización</td>
+                            <td>Fecha entrega</td>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-light">
+                        <template x-for="(item, index) in data" :key="index">
+                            <tr>
+                                <td>
+                                    <span x-text="item.nombre" x-show="!item.editar"></span>
+                                    <input class="form-control form-control-sm" x-show="item.editar" x-model="item.nombre" placeholder="Ingrese el nombre del hito de entrega de información">
+                                </td>
+                                <td>
+                                    <span x-text="item.orgNombre" x-show="!item.editar"></span>
+                                    <select class="form-select form-select-sm" x-show="item.editar" x-model="item.orgId">
+                                        <option value="">Seleccionar</option>
+                                        <template x-for="(item, index) in organizaciones" :key="index">
+                                            <option :value="item.id" x-text="item.nombre"></option>
+                                        </template>
+                                    </select>
+                                </td>
+                                <td>
+                                    <div class="d-flex justify-content-between align-items-center actions-show">
+                                        <span x-text="obtenerFechaAmericana(item.fechaEntrega)" x-show="!item.editar"></span>
+                                        <input type="date" class="form-control form-control-sm" x-show="item.editar" x-model="item.fechaEntrega">
+                                        
+                                        <template x-if="!item.editar">
+                                            <div class="action d-flex ms-2">
+                                                <button type="button" class="btn btn-orange btn-xs me-1" x-on:click="itemEditar(item)" title="Editar">
+                                                    <i class="bi bi-pencil"></i>
+                                                </button>
+                                                <button type="button" class="btn btn-secondary btn-xs me-1" x-on:click="actualizarHEntrega(item, false)" title="Eliminar">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </div>
+                                        </template>
+                                        <template x-if="item.editar">
+                                            <div class="d-flex ms-2">
+                                                <button type="button" class="btn btn-orange btn-xs me-1" x-on:click="actualizarHEntrega(item)" title="Guardar">
+                                                    <i class="bi bi-save"></i>
+                                                </button>
+                                                <button type="button" class="btn btn-secondary btn-xs me-1" x-on:click="cancelarEditar(item, false)" title="Cancelar">
+                                                    <i class="bi bi-x-circle"></i>
+                                                </button>
+                                            </div>
+                                        </template>
+                                    </div>
+                                </td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+            </template>
+
+            <template x-if="showGantt">
+                <div class="table-responsive position-relative gantt-container scroll" id="gantt-container">
+                    <table class="table table-gantt table-bordered mb-0">
+                        <thead>
+                            <tr>
+                                <th class="text-center align-middle fixed-column" style="min-width: 400px; max-width: 400px;" rowspan="3">Descripción Gantt</th>
+                                <template x-for="(anio, index) in aniosGantt" :key="index">
+                                    <th :colspan="anio.semanas.length" class="text-center" x-text="anio.anio"></th>
+                                </template>
+                            </tr>
+                            <tr>
+                                <template x-for="(semana,index) in semanasGantt" :key="index">
+                                    <th class="text-center" style="min-width: 130px;">
+                                        <p class="mb-0" x-text="semana.descripcion"></p>
+                                        <span x-text="semana.semana"></span>
+                                    </th>
+                                </template>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-card">
+                            <template x-for="(item, index) in data" :key="index">
+                                <tr>
+                                    <td class="fixed-column" x-text="item.nombre"></td>
+                                    <td :colspan="semanasGantt.length" style="position: relative;">
+                                        <div class="position-absolute gantt-calendar shadow-sm" :style="`left: ${leftGantt(item.fechaEntrega)}%;`" x-on:mouseenter="showPopoverGantt(event, item)" x-on:mouseleave="popover.show = false"><i class="bi bi-diamond-fill"></i></div>
+                                    </td>
+                                </tr>
+                            </template>
+                        </tbody>
+                    </table>
+                </div>
+            </template>
+
+            <template x-if="data.length == 0">
+                <div class="alert alert-secondary">
+                    <strong><i class="bi bi-exclamation-circle"></i> Aún no se han registrado hitos de entrega de información para este proyecto</strong>
+                </div>
+            </template>
+        </div>
+
+        <div class="popover-gantt border p-2 shadow-md fs-12 text-center" x-show="popover.show" x-transition :style="`left: ${popover.left}px; top: ${popover.top}px;`">
+            <p class="mb-0"><b>Fecha Entrega:</b> <span x-text="popover.fechaentrega"></span></p>
+            <p class="mb-0"><b>Organización:</b> <span x-text="popover.organizacion"></span></p>
+        </div>
+
+    </div>
+</div>
+
+<script src="./pages/bep-estrategia-informacion-hitos-entrega/bep-estrategia-informacion-hitos-entrega.js"></script>

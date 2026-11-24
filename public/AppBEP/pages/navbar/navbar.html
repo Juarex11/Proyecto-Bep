@@ -1,0 +1,38 @@
+<nav class="navbar navbar-expand-lg bep-navbar">
+    <div class="container-fluid px-3 px-lg-4" style="max-width:1640px">
+        <a class="navbar-brand me-lg-4" href="#" onclick="irA('home'); return false;"><img src="img/logo.png" data-logo="img/logo.png" data-logo-oscuro="img/logo-blanco.png" alt="BEPcloud"></a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navPrincipal" aria-controls="navPrincipal" aria-expanded="false" aria-label="Abrir menú">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navPrincipal">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item"><a class="nav-link" data-nav="crear" onclick="nuevoBEP()">Crear nuevo BEP</a></li>
+                <li class="nav-item"><a class="nav-link" data-nav="lista" onclick="irA('home')">Lista de BEP</a></li>
+                <li class="nav-item d-flex" id="navConfig"><a class="nav-link" data-nav="config" onclick="irA('configuracion')"><i class="bi bi-gear me-1"></i>Configuración</a></li>
+            </ul>
+            <div class="d-flex align-items-center flex-wrap gap-2 mt-3 mt-lg-0">
+                <div class="nav-id">
+                    <div id="navEmpresa"></div>
+                    <div id="navPerfil" class="nav-perfil" hidden role="dialog" aria-label="Mi perfil">
+                        <div class="np-titulo">Mi perfil</div>
+                        <div class="np-cab">
+                            <span class="np-ava" id="npAva"></span>
+                            <div class="np-quien"><b id="npNombre"></b><span class="np-rol" id="npRol"></span></div>
+                        </div>
+                        <dl class="np-datos">
+                            <dt>Correo</dt><dd id="npCorreo">-</dd>
+                            <dt>Empresa</dt><dd id="npEmpresa">-</dd>
+                            <dt>Rol</dt><dd id="npRol2">-</dd>
+                        </dl>
+                        <div class="np-opcion">
+                            <label for="swTema"><i class="bi bi-moon-stars"></i> Modo oscuro</label>
+                            <div class="form-check form-switch m-0"><input class="form-check-input" type="checkbox" role="switch" id="swTema"></div>
+                        </div>
+                        <a href="#" id="navSalir" class="np-salir" title="Cerrar sesión"><i class="bi bi-box-arrow-right"></i> Cerrar sesión</a>
+                    </div>
+                </div>
+                <a href="#" id="navCambiar" class="btn btn-secondary btn-sm" title="Elegir otra empresa"><i class="bi bi-arrow-left-right"></i> Cambiar empresa</a>
+            </div>
+        </div>
+    </div>
+</nav>

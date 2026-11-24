@@ -1,0 +1,181 @@
+/* Estilos estructurales de BEP (matrices, Gantt, reporte). El aspecto general sale de Bootstrap + css/bep-bootstrap.css */
+
+.wd-85{
+    width: 85px;
+}
+.wd-50{
+    width: 50px;
+}
+.p-10{
+    padding: 10px;
+}
+.p-15{
+    padding: 15px;
+}
+
+
+.scroll-alcance {
+    height: calc(100vh - 240px);
+    overflow: auto;
+}
+.scroll-raci{
+    height: calc(100vh - 300px);
+    overflow-y: auto;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+.scroll-raci-max table {
+    border-collapse: collapse;
+    min-width: 1200px;
+}
+/* Truco para fijar el encabezado */
+.scroll-alcance table, .scroll-raci table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.scroll-alcance thead, .scroll-raci thead {
+    position: sticky;
+    top: 0;
+    z-index: 3;
+}
+
+
+
+.gantt-container {
+    position: relative;
+    overflow: auto;
+    max-height: calc(100vh - 325px);
+}
+.table-gantt th, .table-gantt td{
+    padding: 0.2rem .5rem;
+}
+.table-gantt .fixed-column {
+    position: sticky;
+    left: 0;
+    background-color: #f8f9fa;
+    z-index: 2;
+}
+.table-gantt th.fixed-column {
+    top: 0;
+    z-index: 3;
+}
+.table-gantt .gantt-calendar{
+    height: 20px;
+    margin-top: -9px;
+    border-radius: 5px;
+    color: #E74419;
+}
+.table-gantt thead {
+    position: sticky;
+    top: 0;
+    z-index: 4;
+    background-color: #f8f9fa;
+}
+.popover-gantt {
+    position: absolute;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    width: 200px;
+    background: white;
+}
+
+
+.scroll::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+}
+.scroll::-webkit-scrollbar-track {
+    background-color: #f1f1f1;
+    border-radius: 10px;
+}
+.scroll::-webkit-scrollbar-thumb {
+    background-color: #888;
+    border-radius: 10px;
+    border: 2px solid #f1f1f1;
+}
+.scroll::-webkit-scrollbar-thumb:hover {
+    background-color: #555;
+}
+
+.mt-50{
+    margin-top: 250px;
+}
+
+
+/*Reporte PDF*/
+.r-table {
+    width: 99%;
+}
+.r-label-150 {
+    font-weight: bold;
+    margin-right: .25rem;
+    display: inline-block;
+    width: 150px; /* el ancho que tú necesites */
+}
+.r-table th{
+    border: 1px solid #edebeb !important;
+}
+.r-table td{
+    border: 1px solid #edebeb !important;
+    padding: .2rem .5rem;
+}
+.r-table thead{
+    background: #F6F6F6;
+}
+.portada {
+    height: 1080px;
+    box-sizing: border-box;
+    overflow: hidden;
+    position: relative;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Centra vertical */
+    align-items: center;     /* Centra horizontal */
+    text-align: center;
+}
+.resumen {
+    box-sizing: border-box;
+    padding: 0px 40px;
+}
+.resumen-etapa {
+    height: 1080px;
+    overflow: hidden;
+}
+.resumen a{
+    color: #000000;
+    text-decoration: none;
+}
+.contenido{
+    padding: 0px 40px;
+}
+.nav-etapas .nav-link{
+    padding: 4px 10px;
+}
+
+@media print {
+    .r-table {
+        width: 99.9%;
+    }
+    .portada{
+        height: 1000px;
+        page-break-before: always;
+        page-break-after: always;
+        page-break-inside: avoid;
+    }
+    .resumen{
+        page-break-before: always;
+        page-break-after: always;
+        page-break-inside: avoid;
+    }
+    .resumen-etapa {
+        height: 1000px;
+        overflow: hidden;
+    }
+    .contenido {
+        margin-top: 40px;
+        page-break-before: always;
+    }
+}

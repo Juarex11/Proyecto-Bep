@@ -1,0 +1,79 @@
+<div class="parametros" x-data="parametros()" x-init="automatico()">
+    <ul class="nav nav-pills">
+        <li class="nav-item me-1" onclick="routeTabConfig('alcance_especialidades')">
+            <a class="nav-link"><i class="bi bi-diagram-3 me-2"></i> Especialidades</a>
+        </li>
+        <li class="nav-item me-1" onclick="routeTabConfig('alcance_categorias')">
+            <a class="nav-link"><i class="bi bi-tags"></i> Categorías</a>
+        </li>
+        <li class="nav-item me-1" onclick="routeTabConfig('alcance_elementos')">
+            <a class="nav-link"><i class="bi bi-box"></i> Elementos</a>
+        </li>
+        <li class="nav-item me-1" onclick="routeTabConfig('alcance_lod')">
+            <a class="nav-link"><i class="bi bi-layers"></i> LOD</a>
+        </li>
+        <li class="nav-item me-1" onclick="routeTabConfig('alcance_parametros')">
+            <a class="nav-link active"><i class="bi bi-sliders"></i> Parámetros</a>
+        </li>
+    </ul>
+    <div class="bg-grey p-3">
+        <div class="card card-bep card-agregar mb-3">
+            <div class="card-header d-flex align-items-center bg-white pointer" x-on:click="showNew = !showNew">
+                <span class="flex-grow-1 fw-semibold fs-13" :class="{'text-orange': showNew}">
+                    <span x-show="campos.ParLoiId == 0"><i class="bi bi-plus-square me-2"></i> Agregar Parámetro</span>
+                    <span x-show="campos.ParLoiId > 0"><i class="bi bi-pencil me-2"></i> Editar Parámetro</span>
+                </span>
+                <span x-show="!showNew"><i class="bi bi-chevron-down"></i></span>
+                <span x-show="showNew"><i class="bi bi-chevron-up"></i></span>
+            </div>
+            <div x-bscollapse="showNew">
+                <div class="card-body">
+                    <form @submit.prevent="guardarParametro()" @keydown.enter.prevent>
+                    <div class="mb-3 row">
+                        <label class="col-sm-2 col-form-label"><i class="bi bi-journal-check"></i> Nombre Parámetro <span class="text-danger">*</span></label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" placeholder="Ingrese el nombre del Parámetro" name="ParLoiNombre" x-model="campos.ParLoiNombre" autocomplete="off" maxlength="100" required>
+                        </div>
+                    </div>
+                    <div class="mb-3 row">
+                        <label class="col-sm-2 col-form-label"><i class="bi bi-calendar-event"></i> Estado <span class="text-danger">*</span></label>
+                        <div class="col-sm-4">
+                            <select class="form-select" name="ParLoiEstado" x-model="campos.ParLoiEstado" required>
+                                <option value="true">Activo</option>
+                                <option value="false">Inactivo</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div>
+                        <button type="submit" class="btn btn-orange btn-sm"><i class="bi bi-save"></i> Guardar</button>
+                        <button type="button" class="btn btn-secondary btn-sm" x-on:click="cancelarParametro()"><i class="bi bi-arrow-up-left-square"></i> Cancelar</button>
+                    </div>
+                </form>
+                </div>
+            </div>
+        </div>
+        <div class="card border-0">
+            <div class="card-body">
+                <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+                    <span class="fw-semibold fs-13 text-orange me-auto"><i class="bi bi-list-task me-2"></i> Lista de Parámetros</span>
+                    <div class="input-group input-group-sm w-auto"><span class="input-group-text">Estado</span>
+                        <select class="form-select" x-model="pag.estado" x-on:change="listaParametros()">
+                            <option value="true">Activo</option>
+                            <option value="false">Inactivo</option>
+                        </select></div>
+                </div>
+                <div x-tabla="{
+                    rows: data,
+                    orden: [[0, 'asc']],
+                    cols: [
+                        { t: 'Nombre Parámetro', c: 'nombre', cls: 'fw-semibold' },
+                        { t: 'Estado', c: 'estado', tipo: 'estado' }
+                    ],
+                    acciones: { editar: (item) => editarParametro(item), eliminar: (item) => eliminarParametro(item) }
+                }"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="./pages/cfg-alcance-parametros/cfg-alcance-parametros.js"></script>

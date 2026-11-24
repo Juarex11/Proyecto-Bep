@@ -1,0 +1,17 @@
+[Unit]
+Description=BEP backend (bep.lyracode.com)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=ubuntu
+WorkingDirectory=/home/ubuntu/Bep/BackNode
+ExecStart=/usr/bin/node server.js
+Restart=on-failure
+RestartSec=5
+# La configuracion (puerto, base de datos, secretos) vive en /home/ubuntu/Bep/BackNode/.env
+NoNewPrivileges=true
+
+[Install]
+WantedBy=multi-user.target

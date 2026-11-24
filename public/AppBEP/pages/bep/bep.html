@@ -1,0 +1,229 @@
+<div x-data="bep()" x-init="automatico()">
+    <section class="bep-hero">
+        <div class="container-fluid px-3 px-lg-4" style="max-width:1640px">
+            <p class="bep-eyebrow mb-1" x-text="existeBep ? (edicionBep ? 'Edición' : 'Consulta') : 'Nuevo proyecto'"></p>
+            <h1 class="mb-1" x-text="existeBep ? (edicionBep ? 'Editar BEP' : 'Ver BEP') : 'Crear nuevo BEP'"></h1>
+            <p class="text-body-secondary mb-0" x-text="existeBep ? 'Completa y actualiza cada sección del plan de ejecución BIM del proyecto.' : 'Registra la descripción del proyecto para habilitar el resto de módulos del plan.'"></p>
+        </div>
+    </section>
+<div class="p-15 bep-contenedor bep-flota">
+    <div class="mb-1 bg-menu px-3 py-2" x-show="existeBep">
+        <div class="row">
+            <div class="col-md-3">
+                <div class="input-group">
+                    <span class="input-group-text fw-bold"><i class="bi bi-file-text me-1"></i> Revisiones</span>
+                    <select class="form-select form-select-sm" name="RevProId" x-model="campos.RevProId" x-on:change="getEtapas()">
+                        <template x-for="(item, index) in revisiones" :key="index">
+                            <option :value="item.id" x-text="item.nombre"></option>
+                        </template>
+                    </select>
+                    <button type="button" class="btn btn-orange btn-xss" x-show="edicionBep" title="Editar Revisión" x-on:click="editarRevision()"><i class="bi bi-pencil"></i></button>
+                </div>
+            </div>
+            <div class="col-md-4">               
+                <div class="input-group" x-show="inputRevision">
+                    <span class="input-group-text fw-bold"><i class="bi bi-pencil me-1"></i> Editar</span>
+                    <input type="text" class="form-control form-control-sm" name="RevProNombre" x-model="campos.RevProNombre" placeholder="Ingrese el nombre de la revisión" maxlength="100">
+                    <button type="button" class="btn btn-orange btn-xss" x-on:click="guardarEditarRevision()" title="Guardar Revisión"><i class="bi bi-save"></i></button>
+                    <button type="button" class="btn btn-secondary btn-xss" title="Cancelar" x-on:click="desactivarEditarRevision()"><i class="bi bi-x-circle"></i></button>
+                </div>
+            </div>
+            <div class="col-md-5 text-end">
+                <button type="button" class="btn btn-orange btn-sm" x-show="edicionBep" x-on:click="crearRevision()"><i class="bi-plus-circle"></i> Crear revisión</button>
+            </div>
+        </div>
+    </div>
+
+    <div x-show="existeBep">
+        <div class="d-flex align-items-center mb-1">
+            <span class="ms-4 me-3 small fw-bold title-etapa"><i class="bi bi-bookmarks"></i> Etapas</span>
+            <ul class="nav nav-pills nav-etapas">
+                <template x-for="(item, index) in etapas" :key="index">
+                    <li class="nav-item me-2">
+                        <div class="nav-link nav-etapa-link d-flex align-items-center" :class="item.id === RevBepId ? 'active' : ''" x-on:click="verEtapa(item.id)" :id="'tab_etapa_'+item.id">
+                            <span x-text="item.nombre"></span>
+
+                            <div class="dropdown ms-2" x-show="edicionBep">
+                                <button class="btn btn-sm p-0 text-muted" data-bs-toggle="dropdown" @click.stop>
+                                    <i class="bi bi-three-dots-vertical"></i>
+                                </button>
+                                <ul class="dropdown-menu fs-13">
+                                    <li x-show="index === etapas.length - 1">
+                                        <button class="dropdown-item" @click="crearEtapa(item)">
+                                            <i class="bi bi-plus-lg me-2"></i> Nueva etapa
+                                        </button>
+                                    </li>
+                                    <li>
+                                        <button class="dropdown-item" @click="editarEtapa(item)">
+                                            <i class="bi bi-pencil me-2"></i> Editar
+                                        </button>
+                                    </li>
+                                    <li x-show="index !== 0">
+                                        <button class="dropdown-item text-danger" @click="eliminarEtapa(item)">
+                                            <i class="bi bi-trash me-2"></i> Eliminar
+                                        </button>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </li>
+                </template>
+            </ul>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-3">
+            <div class="sidebar" id="sidebarBep">
+                <div class="bep-aviso"><i class="bi bi-lock-fill"></i><span>Guarda primero la <b>Descripción del Proyecto</b> para habilitar los demás módulos.</span></div>
+                <a href="#" class="menu-item menu-active" id="opcion_descripcion" onclick="routeTab('descripcion')">
+                    <span><i class="bi bi-file-earmark-text fs-6 me-2"></i> Descripción del Proyecto</span>
+                </a>
+                <div class="menu-section">
+                    <div class="menu-item" data-menu="1">
+                        <span><i class="bi bi-bullseye fs-6 me-2"></i> Estrategia del Proyecto</span> <i class="bi bi-chevron-right rotate-icon"></i>
+                    </div>
+                    <div class="submenu" id="submenu-1">
+                        <a href="#" class="menu-subitem" id="opcion_objetivos_cliente" onclick="routeTab('objetivos_cliente')"><i class="bi bi-buildings me-2"></i> Objetivos del Cliente</a>
+                        <a href="#" class="menu-subitem" id="opcion_objetivos_proyecto" onclick="routeTab('objetivos_proyecto')"><i class="bi bi-bullseye me-2"></i> Objetivos del Proyecto</a>
+                        <a href="#" class="menu-subitem" id="opcion_objetivos_bim" onclick="routeTab('objetivos_bim')"><i class="bi bi-building-fill-up me-2"></i> Objetivos BIM</a>
+                        <a href="#" class="menu-subitem" id="opcion_objetivos_usosBim" onclick="routeTab('objetivos_usosBim')"><i class="bi bi-building-fill-gear me-2"></i> Usos BIM</a>
+                    </div>
+                </div>
+                <a href="#" class="menu-item" id="opcion_alcance" onclick="routeTab('alcance')">
+                    <span><i class="bi bi-database fs-6 me-2"></i> Alcance de Modelado</span>
+                </a>
+                <div class="menu-section">
+                    <div class="menu-item" data-menu="2">
+                        <span><i class="bi bi-grid fs-5 me-2"></i> Matriz de Responsabilidades</span> <i class="bi bi-chevron-right rotate-icon"></i>
+                    </div>
+                    <div class="submenu" id="submenu-2">
+                        <a href="#" class="menu-subitem" id="opcion_matriz_contacto" onclick="routeTab('matriz_contacto')"><i class="bi bi-people me-2"></i> Contactos Clave</a>
+                        <a href="#" class="menu-subitem" id="opcion_matriz_raci" onclick="routeTab('matriz_raci')"><i class="bi bi-grid me-2"></i> Matriz RACI</a>
+                    </div>
+                </div>
+                <div class="menu-section">
+                    <div class="menu-item" data-menu="3">
+                        <span><i class="bi bi-journal-text fs-6 me-2"></i> Estrategia de Información</span> <i class="bi bi-chevron-right rotate-icon"></i>
+                    </div>
+                    <div class="submenu" id="submenu-3">
+                        <a href="#" class="menu-subitem" id="opcion_estrategiaInformacion_hitosConstruccion" onclick="routeTab('estrategiaInformacion_hitosConstruccion')"><i class="bi bi-building me-2"></i> Hitos de Construcción</a>
+                        <a href="#" class="menu-subitem" id="opcion_estrategiaInformacion_hitosEntrega" onclick="routeTab('estrategiaInformacion_hitosEntrega')"><i class="bi bi-send-check me-2"></i> Hitos de Entrega de Información</a>
+                        <a href="#" class="menu-subitem" id="opcion_estrategiaInformacion_flujoTrabajo" onclick="routeTab('estrategiaInformacion_flujoTrabajo')"><i class="bi bi-arrow-repeat me-2"></i> Flujo de Trabajo</a>
+                        <a href="#" class="menu-subitem" id="opcion_estrategiaInformacion_entornoComunDatos" onclick="routeTab('estrategiaInformacion_entornoComunDatos')"><i class="bi bi-cloud-arrow-up me-2"></i> Entorno Común de Datos</a>
+                    </div>
+                </div>
+                <div class="menu-section">
+                    <div class="menu-item" data-menu="4">
+                        <span><i class="bi bi-broadcast fs-6 me-2"></i> Estrategia de Comunicación</span> <i class="bi bi-chevron-right rotate-icon"></i>
+                    </div>
+                    <div class="submenu" id="submenu-4">
+                        <a href="#" class="menu-subitem" id="opcion_estrategiaComunicacion_estrategiaReunion" onclick="routeTab('estrategiaComunicacion_estrategiaReunion')"><i class="bi bi-calendar-check me-2"></i> Estrategia de Reuniones</a>
+                        <a href="#" class="menu-subitem" id="opcion_estrategiaComunicacion_canalComunicacion" onclick="routeTab('estrategiaComunicacion_canalComunicacion')"><i class="bi bi-megaphone me-2"></i> Canales de Comunicación</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contenido -->
+        <div class="col-md-9">
+            <div class="content scroll" id="contentBep"> </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalRevision" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+        <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-14 fw-bold"><i class="bi bi-file-text"></i> Formulario Revisión</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3 row">
+                        <label class="col-sm-3 col-form-label"><i class="bi bi-journal-check"></i> Nombre</label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" name="RevProNombre" x-model="revision.RevProNombre">
+                        </div>
+                    </div>
+                    <div class="mb-3 row">
+                        <label class="col-sm-3 col-form-label"><i class="bi bi-clipboard"></i> Etapas</label>
+                        <div class="col-sm-9">
+                            <template x-for="(item, index) in etapas" :key="index">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" :id="'etapa_'+item.id" :value="item.id" checked>
+                                    <label class="form-check-label fs-13" :for="'etapa_'+item.id" x-text="item.nombre"></label>
+                                </div>
+                            </template>
+                        </div>
+                    </div> <hr>
+                    <div class="fs-13">
+                        <p class="mb-1"><b><i class="bi bi-dot"></i> Revisión Base:</b> <span x-text="revision.Revision"></span></p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-orange" x-on:click="guardarRevision()" >Guardar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalEtapa" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+        <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-md">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-14 fw-bold"><i class="bi bi-file-text"></i> Crear Nueva Etapa</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3 row">
+                        <label class="col-sm-3 col-form-label"><i class="bi bi-journal-check"></i> Nombre</label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" x-model="etapa.RevBepNombre">
+                        </div>
+                    </div> <hr>
+                    <div class="fs-13">
+                        <p class="mb-1"><b><i class="bi bi-dot"></i>Revisión Base:</b> <span x-text="etapa.Revision"></span></p>
+                        <p class="mb-1"><b><i class="bi bi-dot"></i></i>Etapa Base:</b> <span x-text="etapa.Etapa"></span></p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-orange" x-on:click="guardarEtapa()" >Guardar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalEtapaEditar" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+        <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-md">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-14 fw-bold"><i class="bi bi-file-text"></i> Editar Etapa</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3 row">
+                        <label class="col-sm-3 col-form-label"><i class="bi bi-journal-check"></i> Nombre</label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" x-model="campos.RevBepNombre">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-orange" x-on:click="guardarEditarEtapa()" >Guardar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="contentPDF" style="display: none;"> </div>
+    <iframe id="iframePDF" class="iframePDF" style="display: none;"></iframe>
+</div>
+</div>
+<script src="./pages/bep/bep.js"></script>
+
+
+    

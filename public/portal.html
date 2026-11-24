@@ -1,0 +1,310 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BEPcloud · Plan de Ejecución BIM (BEP) · Lyracode</title>
+<style>
+  :root { --bg:#f3f5f9; --card:#fff; --text:#1d2433; --muted:#6b7385; --primary:#2563eb; --border:#d6dbe6; --err:#b42318; --ok:#067647; --chip:#eaf0ff; }
+  @media (prefers-color-scheme: dark) { :root { --bg:#12151c; --card:#1b2030; --text:#e8ebf3; --muted:#9aa3b8; --primary:#5b8cff; --border:#2d3550; --err:#ff8a80; --ok:#6ce9a6; --chip:#243055; } }
+  * { box-sizing: border-box; }
+  body { margin:0; min-height:100vh; background:var(--bg); color:var(--text); font:15px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif; }
+  a { color:var(--primary); }
+  .center { min-height:100vh; display:grid; place-items:center; padding:16px; }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:24px; }
+  h1 { font-size:1.35rem; margin:0 0 4px; } h2 { font-size:1.1rem; margin:0 0 12px; } p { margin:0 0 16px; color:var(--muted); font-size:.9rem; }
+  label { display:block; font-size:.85rem; margin:12px 0 6px; }
+  input { width:100%; padding:10px 12px; border:1px solid var(--border); border-radius:8px; background:transparent; color:var(--text); font:inherit; }
+  input:focus { outline:2px solid var(--primary); outline-offset:1px; }
+  button { padding:9px 14px; border:1px solid var(--border); border-radius:8px; background:transparent; color:var(--text); font:inherit; cursor:pointer; }
+  button.primary { background:var(--primary); border-color:var(--primary); color:#fff; font-weight:600; }
+  button.link { border:0; padding:4px 6px; color:var(--primary); }
+  button[disabled] { opacity:.6; cursor:default; }
+  .msg { min-height:1.3em; margin-top:10px; font-size:.9rem; color:var(--err); } .msg.ok { color:var(--ok); }
+  header { display:flex; align-items:center; gap:12px; flex-wrap:wrap; padding:12px 20px; background:var(--card); border-bottom:1px solid var(--border); }
+  header .brand { font-weight:700; font-size:1.1rem; } header .who { margin-left:auto; text-align:right; font-size:.85rem; color:var(--muted); }
+  main { max-width:980px; margin:0 auto; padding:20px 16px 48px; }
+  .tabs { display:flex; gap:6px; margin-bottom:16px; } .tabs button.on { background:var(--chip); border-color:var(--primary); color:var(--primary); font-weight:600; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:12px; }
+  .emp { text-align:left; padding:16px; width:100%; } .emp:hover { border-color:var(--primary); } .emp b { display:block; font-size:1rem; margin-bottom:4px; } .emp small { color:var(--muted); }
+  .badge { display:inline-block; padding:1px 8px; border-radius:999px; background:var(--chip); color:var(--primary); font-size:.75rem; margin-left:6px; }
+  .badge.off { background:transparent; border:1px solid var(--border); color:var(--muted); }
+  table { width:100%; border-collapse:collapse; font-size:.9rem; } th, td { text-align:left; padding:8px 6px; border-bottom:1px solid var(--border); vertical-align:top; } th { color:var(--muted); font-weight:600; font-size:.8rem; }
+  .row { display:grid; grid-template-columns:1fr 1fr; gap:0 12px; } @media (max-width:640px){ .row { grid-template-columns:1fr; } }
+  .acts { display:flex; flex-wrap:wrap; gap:2px; }
+  dialog { border:1px solid var(--border); border-radius:12px; background:var(--card); color:var(--text); padding:22px; width:min(440px, 92vw); } dialog::backdrop { background:rgba(0,0,0,.45); }
+  .hint { color:var(--muted); font-size:.8rem; margin-top:4px; } .gap { height:16px; }
+
+
+  @font-face { font-family:'Poppins'; font-weight:400; font-style:normal; font-display:swap; src:url(_portal/fonts/poppins-latin-400-normal.woff2) format('woff2'); }
+  @font-face { font-family:'Poppins'; font-weight:600; font-style:normal; font-display:swap; src:url(_portal/fonts/poppins-latin-600-normal.woff2) format('woff2'); }
+  @font-face { font-family:'Poppins'; font-weight:700; font-style:normal; font-display:swap; src:url(_portal/fonts/poppins-latin-700-normal.woff2) format('woff2'); }
+  /* ---------- login BEPcloud ---------- */
+  body.en-login { background:#0b3a8f; }
+  .lg { min-height:100vh; display:grid; grid-template-columns:minmax(0,1.15fr) minmax(0,1fr); position:relative; color:#fff; isolation:isolate;
+        background:#dbe9fb url(_portal/fondo.jpg) left center / cover no-repeat; font-family:"Poppins","Segoe UI",system-ui,-apple-system,Roboto,sans-serif; }
+  .lg::before { content:""; position:absolute; inset:0; z-index:-1; background:linear-gradient(90deg, rgba(3,26,76,.72) 0%, rgba(3,26,76,.5) 36%, rgba(3,26,76,.18) 56%, rgba(3,26,76,0) 66%); }
+  .lg-hero { padding:40px clamp(28px,5vw,72px); display:flex; flex-direction:column; justify-content:center; align-items:flex-start; text-align:left; }
+  .lg-hero > div { max-width:760px; }
+  .lg-hero h1 { font-size:clamp(2.2rem,3.6vw,3.7rem); line-height:1.15; font-weight:700; margin:0; letter-spacing:-.01em; color:#fff; text-shadow:0 2px 18px rgba(2,20,60,.35); }
+  @media (min-width:1000px) { .lg-hero h1 { white-space:nowrap; } }
+  .lg-hero h1 span { display:block; color:#19b2ff; }
+  .lg-hero hr { width:110px; height:4px; border:0; border-radius:2px; background:#19b2ff; margin:32px 0; }
+  .lg-hero p { color:#eef4ff; font-size:clamp(1.15rem,1.7vw,1.6rem); line-height:1.55; font-weight:400; margin:0; text-shadow:0 1px 12px rgba(2,20,60,.4); }
+  .lg-hero p b { color:#fff; font-weight:600; }
+  .lg-side { display:grid; place-items:center; padding:32px 20px; }   /* siempre al medio de la pantalla */
+  .lg-card { width:100%; max-width:500px; background:#fff; color:#1b2a4e; border:1px solid rgba(255,255,255,.8); border-radius:24px; padding:44px 46px 32px; box-shadow:0 24px 64px rgba(10,40,100,.24); text-align:left; }
+  .lg-card img.lg-logo { display:block; width:250px; height:auto; margin:0 auto 26px; }
+  .lg-card h2 { text-align:center; font-size:1.95rem; font-weight:700; margin:0 0 6px; color:#1b2a4e; }
+  .lg-card .lg-sub { text-align:center; color:#5b6b88; font-size:1.05rem; margin:0 0 30px; }
+  .lg-campo { position:relative; margin-bottom:18px; }
+  .lg-campo input { width:100%; height:60px; padding:0 52px 0 56px; border:1px solid #d9e0ee; border-radius:14px; background:#f6f8fc; color:#1b2a4e; font:inherit; font-size:1.05rem; }
+  .lg-campo input::placeholder { color:#8a97b0; }
+  .lg-campo input:focus { outline:0; border-color:#1d6bff; background:#fff; box-shadow:0 0 0 3px rgba(29,107,255,.16); }
+  .lg-campo .ico { position:absolute; left:18px; top:50%; transform:translateY(-50%); width:24px; height:24px; color:#1b2a4e; pointer-events:none; }
+  .lg-campo button.ver { position:absolute; right:6px; top:50%; transform:translateY(-50%); width:42px; height:42px; padding:0; border:0; border-radius:10px; background:transparent; color:#1b2a4e; display:grid; place-items:center; cursor:pointer; }
+  .lg-campo button.ver:hover { background:#e9eef8; } .lg-campo button.ver svg { width:24px; height:24px; }
+  .lg-fila { display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; margin:6px 0 26px; font-size:1rem; }
+  .lg-fila label { display:flex; align-items:center; gap:8px; margin:0; font-size:1rem; color:#33405e; cursor:pointer; }
+  .lg-fila input[type=checkbox] { width:20px; height:20px; margin:0; accent-color:#1d6bff; }
+  .lg-fila a, .lg-fila button.lnk { border:0; background:none; padding:0; color:#0a6cff; font:inherit; font-size:1rem; cursor:pointer; text-decoration:none; } .lg-fila button.lnk:hover { text-decoration:underline; }
+  .lg-card button.lg-ok { width:100%; height:60px; border:0; border-radius:14px; background:linear-gradient(90deg,#0a58ff,#1d9bff); color:#fff; font:inherit; font-size:1.2rem; font-weight:600; display:flex; align-items:center; justify-content:center; gap:10px; cursor:pointer; box-shadow:0 10px 22px rgba(10,88,255,.28); }
+  .lg-card button.lg-ok:hover { filter:brightness(1.06); } .lg-card button.lg-ok svg { width:24px; height:24px; }
+  .lg-card button.lg-ok[disabled] { opacity:.65; cursor:default; }
+  .lg-card .msg { text-align:center; min-height:1.4em; margin-top:14px; font-size:.95rem; color:#c0261c; }
+  .lg-pie-card { display:flex; align-items:center; gap:14px; margin-top:22px; color:#7a88a4; font-size:.9rem; } .lg-pie-card::before, .lg-pie-card::after { content:""; flex:1; height:1px; background:#dfe5f1; }
+  .lg-pie { position:absolute; left:0; bottom:0; width:62%; padding:24px clamp(28px,5vw,72px); display:flex; align-items:center; gap:18px; background:linear-gradient(90deg, rgba(4,28,78,.94), rgba(4,28,78,.7) 70%, rgba(4,28,78,0)); font-size:1.05rem; color:#fff; }
+  .lg-pie::before { content:""; width:44px; height:1px; background:#19b2ff; flex:none; } .lg-pie b { color:#19b2ff; font-weight:700; }
+  @media (max-height:760px) and (min-width:861px) {   /* laptops con poca altura: el formulario sigue completo y al medio */
+    .lg-side { padding:20px; } .lg-card { padding:28px 40px 22px; }
+    .lg-card img.lg-logo { width:200px; margin-bottom:14px; } .lg-card h2 { font-size:1.6rem; } .lg-card .lg-sub { margin-bottom:18px; font-size:.97rem; }
+    .lg-campo { margin-bottom:12px; } .lg-campo input { height:52px; } .lg-fila { margin:4px 0 16px; }
+    .lg-card button.lg-ok { height:52px; font-size:1.08rem; } .lg-pie-card { margin-top:14px; } .lg-card .msg { margin-top:10px; }
+  }
+  @media (max-width:860px) {
+    .lg { grid-template-columns:1fr; background-position:25% top; }
+    .lg::before { background:linear-gradient(180deg, rgba(3,26,76,.78) 0%, rgba(3,26,76,.45) 55%, rgba(3,26,76,.2) 100%); }
+    .lg-hero { padding:32px 22px 4px; } .lg-hero h1 { font-size:2rem; } .lg-hero hr { margin:16px 0; width:80px; } .lg-hero p { display:none; }
+    .lg-side { padding:20px 14px 96px; } .lg-card { padding:30px 22px 24px; } .lg-card img.lg-logo { width:220px; }
+    .lg-pie { width:100%; padding:18px 22px; font-size:.95rem; background:linear-gradient(90deg, rgba(4,28,78,.94), rgba(4,28,78,.7)); }
+  }
+
+  @font-face { font-family:'Poppins'; font-weight:500; font-style:normal; font-display:swap; src:url(_portal/fonts/poppins-latin-500-normal.woff2) format('woff2'); }
+  /* ---------- elegir empresa (mismo estilo que la lista de proyectos) ---------- */
+  body.en-portal { background:#fff; color:#1b2a4e; font-family:"Poppins","Segoe UI",system-ui,-apple-system,Roboto,sans-serif; }
+  .pt-bar { display:flex; align-items:center; gap:10px; flex-wrap:wrap; padding:10px 28px; background:#fff; box-shadow:0 2px 16px rgba(0,33,107,.08); position:sticky; top:0; z-index:5; }
+  .pt-bar img { height:42px; width:auto; display:block; }
+  .pt-bar .pt-who { margin-left:auto; display:flex; align-items:center; gap:8px; padding:8px 16px; background:#eef4fd; border-radius:999px; color:#00216b; font-size:.82rem; font-weight:500; line-height:1.25; }
+  .pt-bar .pt-who small { display:block; color:#5b6b88; font-weight:400; font-size:.75rem; }
+  .pt-bar .pt-who .sup { background:#00216b; color:#fff; border-radius:999px; padding:1px 9px; font-size:.7rem; font-weight:500; }
+  .pt-acc { display:flex; gap:10px; }
+  .pt-btn { display:inline-flex; align-items:center; justify-content:center; gap:8px; height:40px; padding:0 20px; border-radius:999px; border:1.5px solid transparent; font:inherit; font-size:.88rem; font-weight:500; cursor:pointer; white-space:nowrap; transition:background .15s, color .15s, border-color .15s; }
+  .pt-btn.borde { background:#fff; color:#00216b; border-color:#cfd9ee; } .pt-btn.borde:hover { background:#eef4fd; }
+  .pt-btn.naranja { background:#ff7800; color:#fff; border-color:#ff7800; } .pt-btn.naranja:hover { background:#e86c00; border-color:#e86c00; }
+  .pt-btn svg { width:17px; height:17px; }
+  .pt-hero { background:linear-gradient(90deg,rgba(233,241,252,.92) 0%,rgba(233,241,252,.74) 52%,rgba(233,241,252,0) 88%), url(_portal/hero-bep.jpg) center 58%/cover no-repeat, #dbe9fb; padding:44px 0 96px; }
+  .pt-wrap { max-width:1400px; margin:0 auto; padding:0 28px; }
+  .pt-hero .eyebrow { font-size:.75rem; letter-spacing:.14em; text-transform:uppercase; color:#5b6b88; font-weight:600; margin:0 0 6px; }
+  .pt-hero h1 { font-size:clamp(1.7rem,2.8vw,2.5rem); font-weight:600; color:#00216b; margin:0; line-height:1.15; }
+  .pt-hero p.sub { color:#3e4f78; margin:8px 0 0; font-size:1rem; }
+  .pt-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(400px,1fr)); gap:26px; margin:-58px 0 64px; }
+  .pt-emp { display:flex; flex-direction:column; gap:20px; text-align:left; width:100%; min-height:270px; background:#fff; border:1px solid #e3eaf8; border-radius:14px; overflow:hidden; padding:30px 30px 0; box-shadow:0 14px 40px rgba(0,33,107,.13); cursor:pointer; font:inherit; color:#1b2a4e; transition:transform .18s, box-shadow .18s, border-color .18s; }
+  .pt-emp:hover { transform:translateY(-5px); box-shadow:0 22px 54px rgba(0,33,107,.22); border-color:#b9cdf3; }
+  .pt-emp:focus-visible { outline:3px solid rgba(10,70,228,.35); outline-offset:2px; }
+  .pt-emp .top { display:flex; align-items:center; gap:20px; }
+  .pt-emp .ava { flex:none; width:84px; height:84px; border-radius:0; background:#00216b; color:#fff; display:grid; place-items:center; font-weight:600; font-size:1.7rem; letter-spacing:.02em; overflow:hidden; }
+  .pt-emp .ava svg { width:44px; height:44px; stroke-width:1.6; }
+  .pt-emp .ava.logo { border-radius:0; background:#fff; border:1px solid #e3eaf8; padding:8px; } .pt-emp .ava img { max-width:100%; max-height:100%; object-fit:contain; display:block; }
+  .pt-who .foto { flex:none; width:34px; height:34px; border-radius:50%; background:#ff7800; color:#fff; display:grid; place-items:center; font-size:.75rem; font-weight:600; overflow:hidden; } .pt-who .foto.sin-foto { background:none; border-radius:0; color:#ff7800; width:34px; height:34px; } .pt-who .foto.sin-foto svg { width:32px; height:32px; }
+  .pt-who .foto img { width:100%; height:100%; object-fit:cover; display:block; }
+  .pt-emp b { display:block; font-size:1.4rem; font-weight:600; color:#00216b; line-height:1.2; word-break:break-word; }
+  .pt-emp .rol { display:inline-block; margin-top:8px; padding:3px 14px; border-radius:6px; background:#e3eefc; color:#0a46e4; font-size:.78rem; font-weight:500; letter-spacing:.02em; }
+  .pt-emp .url { color:#7a88a4; font-size:.88rem; word-break:break-all; padding-top:16px; border-top:1px solid #eef2fa; }
+  .pt-emp .ir { display:flex; align-items:center; justify-content:space-between; gap:6px; color:#ff7800; font-weight:600; font-size:1rem; margin:auto -30px 0; padding:16px 30px; background:#fff6ee; transition:background .18s, color .18s; }
+  .pt-emp:hover .ir { background:#ff7800; color:#fff; } .pt-emp .ir svg { width:22px; height:22px; transition:transform .18s; } .pt-emp:hover .ir svg { transform:translateX(5px); }
+    @media (max-width:640px) { .pt-grid { grid-template-columns:minmax(0,1fr); gap:18px; } .pt-emp { min-height:0; padding:22px 20px 0; } .pt-emp .ava { width:64px; height:64px; } .pt-emp .ava svg { width:34px; height:34px; } .pt-emp b { font-size:1.2rem; } .pt-emp .ir { margin:auto -20px 0; padding:14px 20px; } }
+  .pt-vacio { background:#fff; border-radius:0; box-shadow:0 12px 44px rgba(0,33,107,.12); margin:-58px auto 56px; padding:44px 24px; text-align:center; max-width:640px; border:1px solid #edf1fa; border-radius:0; }
+  .pt-vacio .ico { width:80px; height:80px; margin:0 auto 16px; border-radius:50%; background:#e3eefc; color:#00216b; display:grid; place-items:center; } .pt-vacio .ico svg { width:36px; height:36px; }
+  .pt-vacio h2 { color:#00216b; font-size:1.25rem; font-weight:600; margin:0 0 6px; } .pt-vacio p { color:#5b6b88; margin:0; }
+  body.en-portal .msg, body.en-portal .pt-msg { text-align:center; margin:0 0 24px; color:#c0261c; }
+  body.en-portal #app { display:flex; flex-direction:column; min-height:100vh; }
+  .pt-footer { margin-top:auto; background:rgba(108,117,125,.16); color:#495057; font-weight:500; padding:9px 0; backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); border-top:1px solid rgba(108,117,125,.18); }
+  .pt-footer .pt-wrap { display:flex; align-items:center; justify-content:space-between; gap:4px 20px; flex-wrap:wrap; }
+  .pt-footer .lema { display:flex; align-items:center; gap:12px; font-size:.78rem; color:#495057; } .pt-footer .lema::before { content:""; width:24px; height:1px; background:#6c757d; flex:none; } .pt-footer .lema b { color:#212529; font-weight:700; }
+  .pt-footer .copy { color:#495057; font-size:.74rem; }
+  @media (max-width:640px) { .pt-footer .pt-wrap { flex-direction:column; align-items:flex-start; } }
+  /* cuadros de dialogo (cambiar contrasena / recuperar) con el mismo estilo */
+  body.en-portal dialog, body.en-login dialog { border:0; border-radius:22px; background:#fff; color:#1b2a4e; padding:28px; width:min(460px,92vw); box-shadow:0 24px 64px rgba(2,20,60,.28); font-family:"Poppins","Segoe UI",system-ui,sans-serif; }
+  body.en-portal dialog::backdrop, body.en-login dialog::backdrop { background:rgba(2,20,60,.5); }
+  body.en-portal dialog h2, body.en-login dialog h2 { color:#00216b; font-size:1.2rem; font-weight:600; margin:0 0 14px; }
+  body.en-portal dialog label { color:#33405e; font-size:.85rem; }
+  body.en-portal dialog input { height:46px; border:1px solid #d9e0ee; border-radius:12px; background:#f6f8fc; color:#1b2a4e; } body.en-portal dialog input:focus { outline:0; border-color:#1d6bff; background:#fff; box-shadow:0 0 0 3px rgba(29,107,255,.16); }
+  body.en-portal dialog p, body.en-login dialog p { color:#33405e; }
+  body.en-portal dialog button, body.en-login dialog button { height:40px; padding:0 20px; border-radius:999px; border:1.5px solid #cfd9ee; background:#fff; color:#00216b; font:inherit; font-size:.88rem; font-weight:500; cursor:pointer; }
+  body.en-portal dialog button:hover, body.en-login dialog button:hover { background:#eef4fd; }
+  body.en-portal dialog button.primary { background:#ff7800; border-color:#ff7800; color:#fff; } body.en-portal dialog button.primary:hover { background:#e86c00; }
+  body.en-portal dialog .msg { color:#c0261c; } body.en-portal dialog .msg.ok { color:#067647; }
+  @media (max-width:640px) { .pt-bar { padding:8px 14px; } .pt-bar img { height:36px; } .pt-acc { width:100%; } .pt-acc .pt-btn { flex:1; padding:0 10px; height:38px; font-size:.82rem; } .pt-bar .pt-who { display:none; } .pt-hero { padding:30px 0 84px; } .pt-wrap { padding:0 14px; } }
+</style>
+<link rel="icon" type="image/png" href="_portal/icono.png">
+<link rel="shortcut icon" href="_portal/favicon.ico">
+</head>
+<body>
+<div id="app"></div>
+<script>
+(function () {
+  const B = location.pathname.replace(/[^\/]*$/, '');            // carpeta del portal, con barra final (/BEP/)
+  const qp = new URLSearchParams(location.search);
+  const app = document.getElementById('app');
+  const state = { yo: null };
+
+  const h = (tag, attrs, ...kids) => {
+    const el = document.createElement(tag);
+    for (const [k, v] of Object.entries(attrs || {})) {
+      if (k === 'class') el.className = v; else if (k.startsWith('on')) el.addEventListener(k.slice(2), v); else if (v !== false && v != null) el.setAttribute(k, v === true ? '' : v);
+    }
+    for (const k of kids.flat()) if (k != null && k !== false) el.append(k.nodeType ? k : document.createTextNode(String(k)));
+    return el;
+  };
+  const api = async (path, method, body) => {
+    const r = await fetch(B + path + ((method || 'GET') === 'GET' ? (path.includes('?') ? '&' : '?') + '_=' + Date.now() : ''), { method: method || 'GET', headers: body ? { 'Content-Type': 'application/json' } : {}, body: body ? JSON.stringify(body) : undefined, cache: 'no-store' });
+    const d = await r.json().catch(() => ({}));
+    return { ok: r.ok && d.ok !== false, status: r.status, d };
+  };
+  const clear = () => { document.body.classList.remove('en-login', 'en-portal'); app.replaceChildren(); };
+  const msg = (el, text, ok) => { el.textContent = text || ''; el.className = 'msg' + (ok ? ' ok' : ''); };
+
+  // ---------------- login ----------------
+  const ico = (inner, extra) => { const t = document.createElement('template'); t.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" ${extra || ''}>${inner}</svg>`; return t.content.firstChild; };
+  const ICO = {
+    user: '<circle cx="12" cy="8" r="4"/><path d="M4 21v-1a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v1"/>',
+    lock: '<rect x="5" y="10.5" width="14" height="10.5" rx="2.5" fill="currentColor" stroke="none"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5"/>',
+    ojo: '<path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
+    ojoNo: '<path d="M3 3l18 18"/><path d="M10.6 6.1A10 10 0 0 1 12 6c6.4 0 10 6 10 6a17 17 0 0 1-3.2 3.7M6.6 7.6C3.9 9.3 2 12 2 12s3.6 6 10 6c1.4 0 2.7-.3 3.8-.8"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/>',
+    entrar: '<path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><path d="M10 17l5-5-5-5"/><path d="M15 12H3"/>',
+    salir: '<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/>',
+    flecha: '<path d="M5 12h14"/><path d="M13 6l6 6-6 6"/>',
+    usuario: '<circle cx="12" cy="8" r="4" fill="currentColor" stroke="none"/><path d="M4 21a8 8 0 0 1 16 0z" fill="currentColor" stroke="none"/>',
+    edificio: '<path d="M4 21V4a1 1 0 0 1 1-1h8a1 1 0 0 1 1 1v17"/><path d="M14 9h5a1 1 0 0 1 1 1v11"/><path d="M3 21h18"/><path d="M8 7h2M8 11h2M8 15h2"/>',
+  };
+
+  function vistaLogin() {
+    clear(); document.body.classList.add('en-login');
+    const m = h('div', { class: 'msg', role: 'alert' });
+    const u = h('input', { type: 'text', name: 'usuario', placeholder: 'Usuario o correo electrónico', autocomplete: 'username', autocapitalize: 'off', spellcheck: 'false', required: true, autofocus: true });
+    const p = h('input', { type: 'password', name: 'password', placeholder: 'Contraseña', autocomplete: 'current-password', required: true });
+    const rec = h('input', { type: 'checkbox', id: 'lg-rec' });
+    const ver = h('button', { class: 'ver', type: 'button', 'aria-label': 'Mostrar contraseña', onclick: () => {
+      const oculto = p.type === 'password'; p.type = oculto ? 'text' : 'password';
+      ver.replaceChildren(ico(oculto ? ICO.ojo : ICO.ojoNo)); ver.setAttribute('aria-label', oculto ? 'Ocultar contraseña' : 'Mostrar contraseña'); p.focus();
+    } }, ico(ICO.ojoNo));
+    const b = h('button', { class: 'lg-ok', type: 'submit' }, ico(ICO.entrar), 'Ingresar');
+    const olvido = h('button', { class: 'lnk', type: 'button', onclick: () => {
+      const d = modal('Recuperar contraseña', h('p', { style: 'margin:0' }, 'Para restablecer su contraseña comuníquese con el administrador de su empresa. Una vez ingrese, podrá cambiarla desde "Cambiar contraseña".'), null);
+    } }, '¿Olvidaste tu contraseña?');
+    const f = h('form', { class: 'lg-card', onsubmit: async (e) => {
+      e.preventDefault(); b.disabled = true; msg(m, '');
+      const r = await api('auth/login', 'POST', { correo: u.value.trim(), password: p.value, recordar: rec.checked }).catch(() => null);
+      if (r && r.ok) return iniciar();
+      msg(m, r ? (r.d.mensaje || 'No se pudo ingresar') : 'Sin conexión con el servidor'); b.disabled = false;
+    } },
+      h('img', { class: 'lg-logo', src: '_portal/logo.png', alt: 'Lyracode BEPcloud', width: 210, height: 54 }),
+      h('h2', {}, 'Iniciar Sesión'), h('p', { class: 'lg-sub' }, 'Accede a tu cuenta para gestionar tu BEP'),
+      h('div', { class: 'lg-campo' }, ico(ICO.user, 'class="ico"'), u),
+      h('div', { class: 'lg-campo' }, ico(ICO.lock, 'class="ico"'), p, ver),
+      h('div', { class: 'lg-fila' }, h('label', { for: 'lg-rec' }, rec, 'Recordar sesión'), olvido),
+      b, m, h('div', { class: 'lg-pie-card' }, 'BEPcloud · Lyracode'));
+    const hero = h('section', { class: 'lg-hero' }, h('div', {}, h('h1', {}, 'Plan de Ejecución BIM', h('span', {}, 'en la Nube')), h('hr'),
+      h('p', {}, 'Gestiona, alinea y controla tu BEP con estándares internacionales como la ', h('b', {}, 'NTP ISO 19650.'))));
+    const pie = h('div', { class: 'lg-pie' }, h('span', {}, 'Impulsando la metodología ', h('b', {}, 'VDC'), ' en la industria AEC'));
+    app.append(h('div', { class: 'lg' }, hero, h('section', { class: 'lg-side' }, f), pie));
+  }
+
+  // ---------------- entrar a una empresa ----------------
+  async function entrar(slug, aviso) {
+    const r = await api('auth/entrar', 'POST', { slug });
+    if (r.ok && r.d.url) { location.href = r.d.url; return true; }
+    if (aviso) msg(aviso, r.d.mensaje || 'No se pudo entrar', false);
+    return false;
+  }
+
+  // ---------------- cerrar sesion ----------------
+  async function cerrarSesion() {
+    try { await api('auth/logout', 'POST', {}); } catch (e) { /* aun asi se intenta salir */ }
+    location.replace(B);   // se recarga el portal ya sin sesion (muestra el login)
+  }
+
+  // ---------------- inicio ----------------
+  function cabecera() {
+    const y = state.yo.usuario;
+    const nombre = `${y.nombre} ${y.apellido}`.trim() || y.correo;
+    return h('header', { class: 'pt-bar' }, h('img', { src: '_portal/logo.png', alt: 'BEPcloud', width: 160, height: 41 }),
+      h('div', { class: 'pt-who' }, avatarUsuario(y, nombre), h('div', {}, nombre, h('small', {}, y.correo)), y.superadmin ? h('span', { class: 'sup' }, 'Superadmin') : null),
+      h('div', { class: 'pt-acc' },
+        h('button', { class: 'pt-btn borde', onclick: dialogoClave }, ico(ICO.lock, 'style="width:16px;height:16px"'), 'Cambiar contraseña'),
+        h('button', { class: 'pt-btn naranja', onclick: cerrarSesion }, ico(ICO.salir), 'Cerrar sesión')));
+  }
+
+  const avatarUsuario = (y) => {
+    const a = h('span', { class: 'foto sin-foto' }, ico(ICO.usuario));
+    if (y.foto) {
+      const im = h('img', { src: `auth/foto?v=${y.foto}`, alt: '' });
+      im.onerror = () => { a.classList.add('sin-foto'); a.replaceChildren(ico(ICO.usuario)); };
+      a.classList.remove('sin-foto'); a.replaceChildren(im);
+    }
+    return a;
+  };
+  const avatarEmpresa = (e) => {
+    if (!e.logo) return h('span', { class: 'ava' }, ico(ICO.edificio));
+    const a = h('span', { class: 'ava logo' }); const im = h('img', { src: `auth/logo/${encodeURIComponent(e.slug)}?v=${e.logo}`, alt: '' });
+    im.onerror = () => { a.className = 'ava'; a.replaceChildren(ico(ICO.edificio)); };
+    a.append(im); return a;
+  };
+  const iniciales = (t) => String(t || '?').trim().split(/\s+/).slice(0, 2).map((x) => x[0]).join('').toUpperCase();
+
+  function vistaInicio() {
+    clear(); document.body.classList.add('en-portal');
+    const m = h('div', { class: 'msg', role: 'alert' });
+    const n = state.yo.empresas.length;
+    const hero = h('section', { class: 'pt-hero' }, h('div', { class: 'pt-wrap' }, h('p', { class: 'eyebrow' }, 'Mis empresas'),
+      h('h1', {}, n ? 'Elige la empresa a la que deseas ingresar' : 'Aún no tienes empresas'),
+      h('p', { class: 'sub' }, n ? (n === 1 ? 'Tienes acceso a 1 empresa.' : `Tienes acceso a ${n} empresas.`) : 'Tu usuario todavía no está asociado a una empresa activa.')));
+    let cuerpo;
+    if (!n) cuerpo = h('div', { class: 'pt-vacio' }, h('div', { class: 'ico' }, ico(ICO.edificio)), h('h2', {}, 'Sin empresas'), h('p', {}, 'Pida a su administrador que lo agregue a una empresa.'));
+    else cuerpo = h('div', { class: 'pt-grid' }, state.yo.empresas.map((e) => h('button', { class: 'pt-emp', type: 'button', onclick: () => entrar(e.slug, m) },
+      h('div', { class: 'top' }, avatarEmpresa(e), h('div', {}, h('b', {}, e.nombre), h('span', { class: 'rol' }, e.rol === 'admin' ? 'Administrador' : 'Usuario'))),
+      h('span', { class: 'url' }, `${location.host}${e.url}`),
+      h('span', { class: 'ir' }, 'Ingresar', ico(ICO.flecha)))));
+    const pie = h('footer', { class: 'pt-footer' }, h('div', { class: 'pt-wrap' }, h('span', { class: 'lema' }, h('span', {}, 'Impulsando la metodología ', h('b', {}, 'VDC'), ' en la industria AEC')), h('span', { class: 'copy' }, `© ${new Date().getFullYear()} Lyracode · BEPcloud`)));
+    app.append(cabecera(), hero, h('main', { class: 'pt-wrap', style: 'width:100%' }, cuerpo, m), pie);
+  }
+
+  const modal = (titulo, cuerpo, acciones) => {
+    const d = h('dialog', {}, h('h2', {}, titulo), cuerpo, h('div', { style: 'display:flex;gap:8px;justify-content:flex-end;margin-top:16px' }, acciones, h('button', { type: 'button', onclick: () => { d.close(); d.remove(); } }, 'Cerrar')));
+    document.body.append(d); d.showModal(); return d;
+  };
+
+  function dialogoClave() {
+    const a = h('input', { type: 'password', autocomplete: 'current-password' }); const n = h('input', { type: 'password', autocomplete: 'new-password' }); const m = h('div', { class: 'msg' });
+    const d = modal('Cambiar contraseña', h('div', {}, h('label', {}, 'Contraseña actual'), a, h('label', {}, 'Nueva contraseña (mínimo 8 caracteres)'), n, m),
+      h('button', { class: 'primary', onclick: async () => { const r = await api('auth/cambiar-clave', 'POST', { actual: a.value, nueva: n.value }); if (r.ok) { msg(m, r.d.mensaje, true); setTimeout(() => { d.close(); d.remove(); }, 900); } else msg(m, r.d.mensaje); } }, 'Guardar'));
+  }
+
+  // ---------------- arranque ----------------
+  async function iniciar() {
+    const r = await api('auth/yo').catch(() => null);
+    if (!r || !r.ok) return vistaLogin();
+    state.yo = r.d;
+    const pedida = qp.get('empresa');
+    const sup = r.d.usuario.superadmin;
+    if (pedida && r.d.empresas.some((e) => e.slug === pedida)) { if (await entrar(pedida)) return; }
+    else if (!pedida && !qp.has('cambiar') && sup && r.d.empresas.some((e) => e.slug === 'principal')) { if (await entrar('principal')) return; }   // el superadmin siempre inicia en la principal; para ir a otra usa "Cambiar empresa"
+    // quien no es superadmin no cambia de empresa: con una sola, entra directo (aunque pida elegir)
+    else if (r.d.empresas.length === 1 && (!sup || (!pedida && !qp.has('cambiar')))) { if (await entrar(r.d.empresas[0].slug)) return; }
+    vistaInicio();
+  }
+  iniciar();
+})();
+</script>
+</body>
+</html>

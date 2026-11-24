@@ -1,0 +1,78 @@
+<form class="bg-card card border-0 descripcion bep-form" x-data="descripcion()" x-init="automatico()" @submit.prevent="guardarBEP()" @keydown.enter.prevent>
+    <div class="bep-form-titulo">
+        <h2><i class="bi bi-file-earmark-text"></i> Descripción del Proyecto</h2>
+        <p>Completa los datos generales del BEP. Los campos con <span class="text-danger">*</span> son obligatorios.</p>
+    </div>
+    <div class="bep-form-cuerpo">
+    <div class="mb-4 row align-items-center">
+        <label class="col-sm-2 col-form-label fw-semibold"><i class="bi bi-journal-check"></i> Nombre BEP <span class="text-danger">*</span></label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control" name="ProBepNombre" x-model="campos.ProBepNombre" placeholder="Ingrese el nombre del BEP" maxlength="255" required>
+        </div>
+    </div>
+    <div class="mb-4 row align-items-center">
+        <label class="col-sm-2 col-form-label fw-semibold"><i class="bi bi-buildings"></i> Cliente</label>
+        <div class="col-sm-4">
+            <select class="form-select" name="RevProOrganizacionId" x-model="campos.RevProOrganizacionId">
+                <option value="0">Seleccionar</option>
+                <template x-for="(item, index) in infoBEP.organizaciones" :key="index">
+                    <option :value="item.id" x-text="item.nombre"></option>
+                </template>
+            </select>
+        </div>
+        <label class="col-sm-2 col-form-label fw-semibold" x-show="usoBep!='soloBEP'"><i class="bi bi-archive"></i> Proyecto</label>
+        <div class="col-sm-4" x-show="usoBep!='soloBEP'">
+            <select class="form-select" name="campana" id="campana">
+                <option value="">Seleccionar</option>
+            </select>
+        </div>
+    </div>
+    <div class="mb-4 row align-items-center">
+        <label class="col-sm-2 col-form-label fw-semibold"><i class="bi bi-bookmark"></i> Tipo <span class="text-danger">*</span></label>
+        <div class="col-sm-4">
+            <select class="form-select" name="RevProTipoId" x-model="campos.RevProTipoId" x-on:change="getCategoriasPlantillas()" required>
+                <option value="">Seleccionar</option>
+                <template x-for="(item, index) in infoBEP.tipos" :key="index">
+                    <option :value="item.id" x-text="item.nombre"></option>
+                </template>
+            </select>
+        </div>
+        <label class="col-sm-2 col-form-label fw-semibold"><i class="bi bi-bookmarks"></i> Clase <span class="text-danger">*</span></label>
+        <div class="col-sm-4">
+            <select class="form-select" name="RevProCategoriaId" x-model="campos.RevProCategoriaId" required>
+                <option value="">Seleccionar</option>
+                <template x-for="(item, index) in categorias" :key="index">
+                    <option :value="item.id" x-text="item.nombre"></option>
+                </template>
+            </select>
+        </div>
+    </div>
+    <div class="mb-4 row align-items-center">
+        <label class="col-sm-2 col-form-label fw-semibold"><i class="bi bi-geo-alt"></i> Ubicación</label>
+        <div class="col-sm-4">
+            <input type="text" class="form-control" name="RevProUbicacion" x-model="campos.RevProUbicacion" placeholder="Ingrese la ubicación del proyecto">
+        </div>
+        <label class="col-sm-2 col-form-label fw-semibold"><i class="bi bi-bookmarks"></i> Plantilla</label>
+        <div class="col-sm-4">
+            <select class="form-select" name="RevProPlantillaId" x-model="campos.RevProPlantillaId">
+                <option value="0">Plantilla Predeterminada</option>
+                <template x-for="(item, index) in plantillas" :key="index">
+                    <option :value="item.id" x-text="item.nombre"></option>
+                </template>
+            </select>
+        </div>
+    </div>
+    <div class="mb-4 row align-items-center">
+        <label class="col-sm-2 col-form-label fw-semibold"><i class="bi bi-journal-text"></i> Descripción</label>
+        <div class="col-sm-10">
+            <textarea class="form-control" name="RevProDescripcion" x-model="campos.RevProDescripcion" placeholder="Escribe la descripción aquí..." maxlength="255" rows="3"></textarea>
+        </div>
+    </div>
+    </div>
+    <div class="bep-form-acciones">
+        <button type="submit" class="btn btn-orange"><i class="bi bi-save"></i> Guardar</button>
+        <button type="button" class="btn btn-secondary" onclick="irA('home')"><i class="bi bi-arrow-up-left-square"></i> Salir</button>
+    </div>
+</form>
+
+<script src="./pages/bep-descripcion/bep-descripcion.js"></script>

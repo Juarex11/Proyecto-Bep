@@ -1,0 +1,72 @@
+<div x-data="configuracion()" x-init="automatico()">
+    <section class="bep-hero">
+        <div class="container-fluid px-3 px-lg-4" style="max-width:1640px">
+            <p class="bep-eyebrow mb-1">Administración</p>
+            <h1 class="mb-1">Configuración</h1>
+            <p class="text-body-secondary mb-0">Define los catálogos, el alcance y las matrices que tu empresa usa en sus planes de ejecución BIM.</p>
+        </div>
+    </section>
+<div class="p-15 bep-contenedor bep-flota">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-3">
+            <div class="sidebar">
+                <div class="menu-section">
+                    <div class="menu-item" data-menu="1">
+                        <span><i class="bi bi-file-earmark-text fs-6 me-2"></i> Proyectos</span> <i class="bi bi-chevron-right rotate-icon"></i>
+                    </div>
+                    <div class="submenu" id="submenu-1">
+                        <a href="#" class="menu-subitem" id="opcion_proyectos_tipos" onclick="routeTabConfig('proyectos_tipos')"><i class="bi bi-bookmark me-2"></i> Tipos</a>
+                        <a href="#" class="menu-subitem" id="opcion_proyectos_categorias" onclick="routeTabConfig('proyectos_categorias')"><i class="bi bi-bookmarks me-2"></i> Clases</a>
+                        <a href="#" class="menu-subitem" id="opcion_proyectos_usosBim" onclick="routeTabConfig('proyectos_usosBim')"><i class="bi bi-building-fill-gear me-2"></i> Usos BIM</a>
+                        <a href="#" class="menu-subitem" id="opcion_proyectos_campanas" onclick="routeTabConfig('proyectos_campanas')"><i class="bi bi-archive me-2"></i> Proyectos</a>
+                    </div>
+                </div>
+                <div class="menu-section">
+                    <div class="menu-item" data-menu="2">
+                        <span><i class="bi bi-database fs-6 me-2"></i> Alcance</span> <i class="bi bi-chevron-right rotate-icon"></i>
+                    </div>
+                    <div class="submenu" id="submenu-2">
+                        <a href="#" class="menu-subitem" id="opcion_alcance_especialidades" onclick="routeTabConfig('alcance_especialidades')"><i class="bi bi-diagram-3 me-2"></i> Especialidades</a>
+                        <a href="#" class="menu-subitem" id="opcion_alcance_categorias" onclick="routeTabConfig('alcance_categorias')"><i class="bi bi-tags me-2"></i> Categorías</a>
+                        <a href="#" class="menu-subitem" id="opcion_alcance_elementos" onclick="routeTabConfig('alcance_elementos')"><i class="bi bi-box me-2"></i> Elementos</a>
+                        <a href="#" class="menu-subitem" id="opcion_alcance_lod" onclick="routeTabConfig('alcance_lod')"><i class="bi bi-layers me-2"></i> LOD</a>
+                        <a href="#" class="menu-subitem" id="opcion_alcance_parametros" onclick="routeTabConfig('alcance_parametros')"><i class="bi bi-sliders me-2"></i> Parámetros</a>
+                    </div>
+                </div>
+                <div class="menu-section">
+                    <div class="menu-item" data-menu="3">
+                        <span><i class="bi bi-grid fs-6 me-2"></i> Matriz</span> <i class="bi bi-chevron-right rotate-icon"></i>
+                    </div>
+                    <div class="submenu" id="submenu-3">
+                        <a href="#" class="menu-subitem" id="opcion_matriz_organizaciones" onclick="routeTabConfig('matriz_organizaciones')"><i class="bi bi-buildings me-2"></i> Organizaciones</a>
+                        <a href="#" class="menu-subitem" id="opcion_matriz_roles" onclick="routeTabConfig('matriz_roles')"><i class="bi bi-person-badge me-2"></i> Roles</a>
+                        <a href="#" class="menu-subitem" id="opcion_matriz_actividades" onclick="routeTabConfig('matriz_actividades')"><i class="bi bi-list-check me-2"></i> Actividades</a>
+                        <a href="#" class="menu-subitem" id="opcion_matriz_procesos" onclick="routeTabConfig('matriz_procesos')"><i class="bi bi-repeat me-2"></i> Procesos</a>
+                        <a href="#" class="menu-subitem" id="opcion_matriz_leyRaci" onclick="routeTabConfig('matriz_leyRaci')"><i class="bi bi-info-circle me-2"></i> Leyenda RACI</a>
+                    </div>
+                </div>
+                <div class="menu-section">
+                    <div class="menu-item" data-menu="4">
+                        <span><i class="bi bi-table fs-6 me-2"></i> Administración</span> <i class="bi bi-chevron-right rotate-icon"></i>
+                    </div>
+                    <div class="submenu" id="submenu-4">
+                        <a href="#" class="menu-subitem d-none" id="opcion_administracion_empresas" onclick="routeTabConfig('administracion_empresas')"><i class="bi bi-buildings me-2"></i> Empresas</a>
+                        <a href="#" class="menu-subitem" id="opcion_administracion_empresa" onclick="routeTabConfig('administracion_empresa')"><i class="bi bi-building me-2"></i> Mi empresa</a>
+                        <a href="#" class="menu-subitem" id="opcion_administracion_usuarios" onclick="routeTabConfig('administracion_usuarios')"><i class="bi bi-people me-2"></i> Usuarios</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contenido -->
+        <div class="col-md-9">
+            <div class="content-configuracion scroll" id="contentConfiguracion"> </div>
+        </div>
+    </div>
+</div>
+</div>
+<script src="./pages/configuracion/configuracion.js"></script>
+
+
+    

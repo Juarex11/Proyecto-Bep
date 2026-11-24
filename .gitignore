@@ -1,0 +1,7 @@
+node_modules/
+.env
+ArchivosBEP/
+*.sqlite
+*.sqlite-journal
+respaldo_front/
+*.tar.gz

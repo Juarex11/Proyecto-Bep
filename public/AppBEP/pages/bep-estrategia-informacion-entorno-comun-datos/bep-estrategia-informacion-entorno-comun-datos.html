@@ -1,0 +1,103 @@
+<div class="ecomundatos" x-data="ecomundatos()" x-init="automatico()">
+    <ul class="nav nav-pills">
+        <li class="nav-item me-1" onclick="routeTab('estrategiaInformacion_hitosConstruccion')">
+            <a class="nav-link"><i class="bi bi-building me-2"></i> Hitos de construcción</a>
+        </li>
+        <li class="nav-item me-1" onclick="routeTab('estrategiaInformacion_hitosEntrega')">
+            <a class="nav-link"><i class="bi bi-send-check me-2"></i> Hitos de entrega de información</a>
+        </li>
+        <li class="nav-item me-1" onclick="routeTab('estrategiaInformacion_flujoTrabajo')">
+            <a class="nav-link"><i class="bi bi-arrow-repeat"></i> Flujo de trabajo</a>
+        </li>
+        <li class="nav-item me-1" onclick="routeTab('estrategiaInformacion_entornoComunDatos')">
+            <a class="nav-link active"><i class="bi bi-cloud-arrow-up"></i> Entorno Común de Datos (CDE)</a>
+        </li>
+    </ul>
+
+    <div class="bg-grey p-3">
+        <div class="card card-bep card-agregar mb-3">
+            <div class="card-header d-flex align-items-center bg-white py-2 pointer" x-on:click="showNew = !showNew">
+                <span class="flex-grow-1 fw-semibold fs-13" :class="{'text-orange': showNew}">
+                    <span x-show="campos.EcdBepId == 0"><i class="bi bi-plus-square me-2"></i> Agregar Entorno Común de Datos (CDE)</span>
+                    <span x-show="campos.EcdBepId > 0"><i class="bi bi-pencil me-2"></i> Editar Entorno Común de Datos (CDE)</span>
+                </span>
+                <span x-show="!showNew"><i class="bi bi-chevron-down"></i></span>
+                <span x-show="showNew"><i class="bi bi-chevron-up"></i></span>
+            </div>
+            <div class="card-body" x-show="showNew">
+                <form @submit.prevent="guardarEComunDatos()" @keydown.enter.prevent>
+                    <div class="mb-3 row">
+                        <label class="col-sm-2 col-form-label"><i class="bi bi-journal-check"></i> Plataforma CDE <span class="text-danger">*</span></label>
+                        <div class="col-sm-10">
+                            <select class="form-select" name="EcdBepNombre" x-model="campos.EcdBepNombre" required>
+                                <option value="">Seleccionar</option>
+                                <template x-for="(item, index) in plataformasCDE" :key="index">
+                                    <option :value="item" x-text="item"></option>
+                                </template>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mb-3 row">
+                        <label class="col-sm-2 col-form-label"><i class="bi bi-link-45deg"></i> Url</label>
+                        <div class="col-sm-10">
+                            <input type="url" class="form-control" placeholder="Ingrese la URL del archivo" name="EcdBepUrl" x-model="campos.EcdBepUrl" autocomplete="off" maxlength="1000">
+                        </div>
+                    </div>
+                    <div class="mb-3 row">
+                        <label class="col-sm-2 col-form-label"><i class="bi bi-chat-left-dots"></i> Comentario</label>
+                        <div class="col-sm-10">
+                            <textarea class="form-control" name="EcdBepComentario" x-model="campos.EcdBepComentario" placeholder="Escribe el comentario aquí..." maxlength="1000" rows="2"></textarea>
+                        </div>
+                    </div>
+                    <div>
+                        <button type="submit" class="btn btn-orange btn-sm"><i class="bi bi-save"></i> Guardar</button>
+                        <button type="button" class="btn btn-secondary btn-sm" x-on:click="cancelarEComunDatos()"><i class="bi bi-arrow-up-left-square"></i> Cancelar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="card p-3 border-0 rounded-0">
+            <template x-if="data.length > 0">
+                <table class="table mb-0">
+                    <thead class="bg-bep text-white">
+                        <tr>
+                            <td>Plataforma CDE</td>
+                            <td>Url</td>
+                            <td>Comentario</td>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-light">
+                        <template x-for="(item, index) in data" :key="index">
+                            <tr>
+                                <td x-text="item.nombre"></td>
+                                <td x-text="item.url"></td>
+                                <td>
+                                    <div class="d-flex justify-content-between align-items-center actions-show">
+                                        <span x-text="item.comentario"></span>
+                                        <div class="action d-flex ms-2">
+                                            <button type="button" class="btn btn-orange btn-xs me-1" x-on:click="editarEComunDatos(item)" title="Editar">
+                                                <i class="bi bi-pencil"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-secondary btn-xs me-1" x-on:click="eliminarEComunDatos(item)" title="Eliminar">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+            </template>
+            
+            <template x-if="data.length == 0">
+                <div class="alert alert-secondary">
+                    <strong><i class="bi bi-exclamation-circle"></i> Aún no se han registrado Entorno Común de Datos para este proyecto</strong>
+                </div>
+            </template>
+        </div>
+    </div>
+</div>
+
+<script src="./pages/bep-estrategia-informacion-entorno-comun-datos/bep-estrategia-informacion-entorno-comun-datos.js"></script>

@@ -1,0 +1,413 @@
+<div class="portada">
+    <h1 x-text="pdf.NombreBep"></h1>
+    <h2 x-text="pdf.Proyecto"></h2>
+    <h4><b>Revisión:</b> <span x-text="pdf.Revision"></span></h4>
+    <h4><b>Fecha Impresión:</b> <span x-text="obtenerFechaAmericana(obtenerFechaActual())"></span></h4>
+</div>
+<div class="resumen" :class="{'resumen-etapa': pdf.Etapas.length == 1}">
+    <h3 class="fw-bold mt-5">CONTENIDO</h3> <hr>
+    <p class="fw-bold"><a href="#Seccion1">1. DESCRIPCIÓN DEL PROYECTO</a></p>
+
+    <template x-for="(etapa, iex) in pdf.Etapas" :key="iex">
+        <div>
+            <p class="fw-bold"><a :href="'#'+etapa.Seccion"><span x-text="etapa.Numero"></span>. <span x-text="etapa.Nombre"></span></a></p>
+            
+            <p class="ms-3 mb-1 fw-bold"><a href="#"><span x-text="etapa.Numero"></span>.1. ESTRATEGIA DEL PROYECTO</a></p>
+            <p class="ms-3 mb-1"><a href="#"><span x-text="etapa.Numero"></span>.1.1. OBJETIVOS DEL CLIENTE</a></p>
+            <p class="ms-3 mb-1"><a href="#"><span x-text="etapa.Numero"></span>.1.2. OBJETIVOS DEL PROYECTO</a></p>
+            <p class="ms-3 mb-1"><a href="#"><span x-text="etapa.Numero"></span>.1.3. OBJETIVOS BIM</a></p>
+            <p class="ms-3 mb-1"><a href="#"><span x-text="etapa.Numero"></span>.1.4. USOS BIM</a></p>
+            <p class="ms-3 mb-1 fw-bold"><a href="#"><span x-text="etapa.Numero"></span>.2. ALCANCE DE MODELADO</a></p>
+            <p class="ms-3 mb-2"><a href="#"><span x-text="etapa.Numero"></span>.2.1. ESPECIALIDADES</a></p>
+            <template x-for="(item, index) in etapa.Especialidades" :key="index">
+                <p class="ms-5 mb-1">
+                    <a href="#">
+                        <span x-text="etapa.Numero"></span>.<span x-text="`2.1.${index + 1}.`"></span> 
+                        <span class="text-uppercase" x-text="item.Nombre"></span>
+                    </a>
+                </p>
+            </template>
+            <p class="ms-3 mb-1 fw-bold"><a href="#"><span x-text="etapa.Numero"></span>.3. MATRIZ DE RESPONSABILIDADES</a></p>
+            <p class="ms-3 mb-1"><a href="#"><span x-text="etapa.Numero"></span>.3.1. CONTACTOS CLAVE</a></p>
+            <p class="ms-3 mb-1"><a href="#"><span x-text="etapa.Numero"></span>.3.2. MATRIZ RACI</a></p>
+            <p class="ms-3 mb-1 fw-bold"><a href="#"><span x-text="etapa.Numero"></span>.4. ESTRATEGIA DE INFORMACIÓN</a></p>
+            <p class="ms-3 mb-1"><a href="#"><span x-text="etapa.Numero"></span>.4.1. HITOS DE CONSTRUCCIÓN</a></p>
+            <p class="ms-3 mb-1"><a href="#"><span x-text="etapa.Numero"></span>.4.2. HITOS DE ENTREGA DE INFORMACIÓN</a></p>
+            <p class="ms-3 mb-1"><a href="#"><span x-text="etapa.Numero"></span>.4.3. FLUJO DE TRABAJO</a></p>
+            <p class="ms-3 mb-1"><a href="#"><span x-text="etapa.Numero"></span>.4.4. ENTORNO COMÚN DE DATOS</a></p>
+            <p class="ms-3 mb-1 fw-bold"><a href="#"></a><span x-text="etapa.Numero"></span>.5. ESTRATEGIA DE COMUNICACIÓN</p>
+            <p class="ms-3 mb-1"><a href="#"><span x-text="etapa.Numero"></span>.5.1. ESTRATEGIA DE REUNIONES</a></p>
+            <p class="ms-3"><a href="#"><span x-text="etapa.Numero"></span>.5.2. CANALES DE COMUNICACIÓN</a></p>
+        </div>
+    </template>
+</div>
+<div class="contenido">
+    <h5 class="fw-bold">PROYECTO BEP</h5>
+    <h6 id="Seccion1" class="fw-bold">1. DESCRIPCIÓN DEL PROYECTO</h6>
+    <div class="ms-3 mb-3">
+        <div class="d-flex align-items-start mb-1 ">
+            <span class="r-label-150">Nombre BEP</span>
+            <span class="fw-bold me-5">:</span>
+            <span x-text="pdf.NombreBep"></span>
+        </div>
+        <div class="d-flex align-items-start mb-1">
+            <span class="r-label-150">Proyecto</span>
+            <span class="fw-bold me-5">:</span>
+            <span x-text="pdf.Proyecto"></span>
+        </div>
+        <div class="d-flex align-items-start mb-1">
+            <span class="r-label-150">Cliente</span>
+            <span class="fw-bold me-5">:</span>
+            <span x-text="pdf.Cliente"></span>
+        </div>
+        <div class="d-flex align-items-start mb-1">
+            <span class="r-label-150">Tipo</span>
+            <span class="fw-bold me-5">:</span>
+            <span x-text="pdf.Tipo"></span>
+        </div>
+        <div class="d-flex align-items-start mb-1">
+            <span class="r-label-150">Categoría</span>
+            <span class="fw-bold me-5">:</span>
+            <span x-text="pdf.Categoria"></span>
+        </div>
+        <div class="d-flex align-items-start mb-1">
+            <span class="r-label-150">Ubicación</span>
+            <span class="fw-bold me-5">:</span>
+            <span x-text="pdf.Ubicacion"></span>
+        </div>
+        <div class="d-flex align-items-start mb-1">
+            <span class="r-label-150 flex-shrink-0">Descripción</span>
+            <span class="fw-bold me-5 flex-shrink-0">:</span>
+            <span x-text="pdf.Descripcion"></span>
+        </div>
+    </div>
+
+    <template x-for="(etapa, iex) in pdf.Etapas" :key="iex">
+        <div>
+            <h6 :id="etapa.Seccion" class="fw-bold"><span x-text="etapa.Numero"></span>. <span x-text="etapa.Nombre"></span></h6>
+
+            <p class="fw-bold"><span x-text="etapa.Numero"></span>.1. ESTRATEGIA DEL PROYECTO</p>
+            <p class="fw-bold"><span x-text="etapa.Numero"></span>.1.1. OBJETIVOS DEL CLIENTE</p>
+            <table class="table r-table">
+                <thead>
+                    <tr>
+                        <th>Objetivo</th>
+                        <th>Descripción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <template x-for="(item, index) in etapa.ObjetivosCliente" :key="index">
+                        <tr>
+                            <td x-text="item.Nombre"></td>
+                            <td x-text="item.Descripcion"></td>
+                        </tr>
+                    </template>
+                </tbody>
+            </table>
+
+            <p class="fw-bold"><span x-text="etapa.Numero"></span>.1.2. OBJETIVOS DEL PROYECTO</p>
+            <table class="table r-table">
+                <thead>
+                    <tr>
+                        <th>Objetivo</th>
+                        <th>Descripción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <template x-for="(item, index) in etapa.ObjetivosProyecto" :key="index">
+                        <tr>
+                            <td x-text="item.Nombre"></td>
+                            <td x-text="item.Descripcion"></td>
+                        </tr>
+                    </template>
+                </tbody>
+            </table>
+
+            <p class="fw-bold"><span x-text="etapa.Numero"></span>.1.3. OBJETIVOS BIM</p>
+            <table class="table r-table">
+                <thead>
+                    <tr>
+                        <th>Objetivo BIM</th>
+                        <th>Descripción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <template x-for="(item, index) in etapa.ObjetivosBim" :key="index">
+                        <tr>
+                            <td x-text="item.Nombre"></td>
+                            <td x-text="item.Descripcion"></td>
+                        </tr>
+                    </template>
+                </tbody>
+            </table>
+
+            <p class="fw-bold"><span x-text="etapa.Numero"></span>.1.4. USOS BIM</p>
+            <table class="table r-table">
+                <thead>
+                    <tr>
+                        <th>Usos BIM</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <template x-for="(item, index) in etapa.UsosBim" :key="index">
+                        <tr>
+                            <td x-text="item.Nombre"></td>
+                        </tr>
+                    </template>
+                </tbody>
+            </table>
+
+            <h6 class="fw-bold"><span x-text="etapa.Numero"></span>.2. ALCANCE DE MODELADO</h6>
+            <p class="fw-bold"><span x-text="etapa.Numero"></span>.2.1. ESPECIALIDADES</p>
+            <template x-for="(item, index) in etapa.Especialidades" :key="index">
+                <div class="mb-4">
+                    <p class="fw-bold">
+                        <span x-text="etapa.Numero"></span>.<span x-text="`2.1.${index + 1}.`"></span>
+                        <span class="text-uppercase" x-text="item.Nombre"></span>
+                    </p>
+                    <table class="table r-table">
+                        <thead>
+                            <tr>
+                                <th>Categoría</th>
+                                <th>Elemento</th>
+                                <th>LOD</th>
+                                <th>Parámetros LOI</th>
+                                <th>Observación</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <template x-for="(detalle, j) in item.DetalleLOD" :key="j">
+                                <tr>
+                                    <template x-if="j === 0 || (item.DetalleLOD[j - 1] && item.DetalleLOD[j - 1].CatEleId !== detalle.CatEleId)">
+                                        <td :rowspan="totalElementos(item.DetalleLOD, detalle.CatEleId)" x-text="detalle.Categoria"></td>
+                                    </template>
+                                    <td x-text="detalle.Elemento"></td>
+                                    <td x-text="detalle.Lod.replace(/[^0-9]/g, '')"></td>
+                                    <td>
+                                        <template x-if="detalle.DetalleLOI">
+                                            <span class="me-1" x-text="detalle.DetalleLOI.map(det => det.Parametro).join(', ')"></span>
+                                        </template>
+                                        </td>
+                                    <td x-text="detalle.Observacion"></td>
+                                </tr>
+                            </template>
+                        </tbody>
+                    </table>
+                </div>
+            </template>
+
+            <h6 class="fw-bold"><span x-text="etapa.Numero"></span>.3. MATRIZ DE RESPONSABILIDADES</h6>
+            <p class="fw-bold"><span x-text="etapa.Numero"></span>.3.1. CONTACTOS CLAVE</p>
+            <table class="table r-table">
+                <thead>
+                    <tr>
+                        <th>Nombres</th>
+                        <th>Apellidos</th>
+                        <th>Correo Electrónico</th>
+                        <th>Organización</th>
+                        <th>Rol</th>
+                        <th>Teléfono</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <template x-for="(item, index) in etapa.ContactosClave" :key="index">
+                        <tr>
+                            <td x-text="item.Nombres"></td>
+                            <td x-text="item.Apellidos"></td>
+                            <td x-text="item.Correo"></td>
+                            <td x-text="item.Organizacion"></td>
+                            <td x-text="item.Rol"></td>
+                            <td x-text="item.Telefono"></td>
+                        </tr>
+                    </template>
+                </tbody>
+            </table>
+
+            <p class="fw-bold"><span x-text="etapa.Numero"></span>.3.2. MATRIZ RACI</p>
+            <div class="d-flex justify-content-end mb-3">
+                <div class="d-flex gap-3 fs-13">
+                    <template x-for="(item, index) in etapa.LeyendaRaci" :key="index">
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="rounded-circle d-inline-block" :style="`background-color:${item.Fondo}; width:12px; height:12px;`">
+                            </span>
+                            <span x-text="`${item.Abreviacion}: ${item.Nombre}`"></span>
+                        </div>
+                    </template>
+                </div>
+            </div>
+            <table class="table r-table">
+                <thead>
+                    <tr>
+                        <th>Actividad</th>
+                        <th>Proceso</th>
+                        <template x-for="(item, index) in etapa.OrganizacionesRaci" :key="index">
+                            <th x-text="item.Nombre"></th>
+                        </template>
+                    </tr>
+                </thead>
+                <tbody>
+                    <template x-for="(item, index) in etapa.MatrizRaci" :key="index">
+                        <tr>
+                            <template x-if="index === 0 || (etapa.MatrizRaci[index - 1] && etapa.MatrizRaci[index - 1].ActId !== item.ActId)">
+                                <td :rowspan="totalSubActividades(etapa, item.ActId)" x-text="item.Actividad"></td>
+                            </template>
+                            <td x-text="item.SubActividad"></td>
+                            <template x-for="(org, j) in etapa.OrganizacionesRaci" :key="j">
+                                <td class="text-center">
+                                    <template x-for="(rol, k) in getRolRaci(item.DetalleMatriz, org.Id)" :key="k">
+                                        <span class="badge me-1 mb-1" x-text="rol.Abreviacion" :style="`background-color: ${rol.Fondo};color: ${rol.Color};`"></span>
+                                    </template>
+                                </td>
+                            </template>
+                        </tr>
+                    </template>
+                </tbody>
+            </table>
+
+            <h6 class="fw-bold"><span x-text="etapa.Numero"></span>.4. ESTRATEGIA DE INFORMACIÓN</h6>
+            <p class="fw-bold"><span x-text="etapa.Numero"></span>.4.1. HITOS DE CONSTRUCCIÓN</p>
+            <table class="table r-table">
+                <thead>
+                    <tr>
+                        <th>Hito Construcción</th>
+                        <th>Fecha Inicio</th>
+                        <th>Fecha Fin</th>
+                    </tr>
+                </thead> 
+                <tbody>
+                    <template x-for="(item, index) in etapa.HitosConstruccion" :key="index">
+                        <tr>
+                            <td x-text="item.Nombre"></td>
+                            <td x-text="obtenerFechaAmericana(item.FechaInicio)"></td>
+                            <td x-text="obtenerFechaAmericana(item.FechaFin)"></td> 
+                        </tr>
+                    </template>
+                </tbody>
+            </table>
+
+            <p class="fw-bold"><span x-text="etapa.Numero"></span>.4.2. HITOS DE ENTREGA DE INFORMACIÓN</p>
+            <table class="table r-table">
+                <thead>
+                    <tr>
+                        <th>Entregable</th>
+                        <th>Organización</th>
+                        <th>Fecha Entrega</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <template x-for="(item, index) in etapa.HitosEntregaInformacion" :key="index">
+                        <tr>
+                            <td x-text="item.Nombre"></td>
+                            <td x-text="item.Organizacion"></td>
+                            <td x-text="obtenerFechaAmericana(item.FechaEntrega)"></td> 
+                        </tr>
+                    </template>
+                </tbody>
+            </table>
+
+            <p class="fw-bold"><span x-text="etapa.Numero"></span>.4.3. FLUJO DE TRABAJO</p>
+            <table class="table r-table">
+                <thead>
+                    <tr>
+                        <th>Nombre Recurso</th>
+                        <th>Archivos</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <template x-for="(item, index) in etapa.FlujoTrabajo" :key="index">
+                        <tr>
+                            <td>
+                                <p class="mb-1" x-text="item.Nombre"></p>
+                                <a :href="item.Url" x-text="item.Url"></a>
+                            </td>
+                            <td>
+                                <template x-for="(file, j) in item.Archivos" :key="j">
+                                    <div>
+                                        <template x-if="file.Tipo.startsWith('image/')">
+                                            <img class="mt-1" :src="url + file.Ruta" alt="" width="400px">
+                                        </template>
+                                        <template x-if="!file.Tipo.startsWith('image/')">
+                                            <p class="mb-0">
+                                                <a :href="url + file.Ruta" x-text="file.Nombre" target="_blank"></a>
+                                            </p>
+                                        </template>
+                                    </div>
+                            </template>
+                            </td>
+                        </tr>
+                    </template>
+                </tbody>
+            </table>
+
+            <p class="fw-bold"><span x-text="etapa.Numero"></span>.4.4. ENTORNO COMÚN DE DATOS</p>
+            <table class="table r-table">
+                <thead>
+                    <tr>
+                        <th>Plataforma CDE</th>
+                        <th>Comentario</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <template x-for="(item, index) in etapa.EntornoComunDatos" :key="index">
+                        <tr>
+                            <td x-text="item.Nombre"></td>
+                            <td x-text="item.Comentario"></td>
+                        </tr>
+                    </template>
+                </tbody>
+            </table>
+
+            <h6 class="fw-bold"><span x-text="etapa.Numero"></span>.5. ESTRATEGIA DE COMUNICACIÓN</h6>
+            <p class="fw-bold"><span x-text="etapa.Numero"></span>.5.1. ESTRATEGIA DE REUNIONES</p>
+            <table class="table r-table">
+                <thead>
+                    <tr>
+                        <th>Reunión</th>
+                        <th>Plataforma</th>
+                        <th>Recurrencia</th> 
+                        <th>Ubicación</th>
+                        <th>Responsable</th>
+                        <th>Involucrados</th>
+                        <th>Descripción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <template x-for="(item, index) in etapa.EstrategiaReuniones" :key="index">
+                        <tr>
+                            <td x-text="item.Nombre"></td>
+                            <td x-text="item.Plataforma"></td>
+                            <td>
+                                <p class="mb-0" x-text="item.Frecuencia"></p>
+                                <p class="mb-0" x-text="item.Dias"></p>
+                                <p class="mb-0" x-text="item.HoraMinuto"></p>
+                                <p class="mb-0" x-text="item.Duracion + ' min'"></p>
+                            </td>
+                            <td x-text="item.Ubicacion"></td>
+                            <td x-text="item.Responsable"></td>
+                            <td x-text="getInvolucrados(etapa, item.Involucrados)"></td>
+                            <td x-text="item.Descripcion"></td>
+                        </tr>
+                    </template>
+                </tbody>
+            </table>
+
+            <p class="fw-bold"><span x-text="etapa.Numero"></span>.5.2. CANALES DE COMUNICACIÓN</p>
+            <table class="table r-table">
+                <thead>
+                    <tr>
+                        <th>Medios Utilizados</th>
+                        <th>Propósito del Canal</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <template x-for="(item, index) in etapa.CanalesComunicacion" :key="index">
+                        <tr>
+                            <td x-text="item.Nombre"></td>
+                            <td x-text="item.Proposito"></td>
+                        </tr>
+                    </template>
+                </tbody>
+            </table>
+        </div>
+    </template>
+</div>

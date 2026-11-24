@@ -1,0 +1,222 @@
+<div class="alcance" x-data="alcance()" x-init="automatico()">
+    <div class="bg-grey p-3">
+        <div class="row">
+            <div class="col-md-3">
+                <div class="card card-bep card-agregar mb-2">
+                    <div class="card-header bg-white py-2 pointer" x-on:click="agregarEspecialidades()">
+                        <span class="fw-semibold fs-13"><i class="bi bi-plus-square me-2"></i> Agregar Especialidad</span>
+                    </div>
+                </div>
+                <template x-for="(item, index) in data" :key="index">
+                    <div class="card card-bep mb-2" :id="'esPCard_'+item.id">
+                        <div class="card-header d-flex align-items-center bg-white fs-13">
+                            <span class="flex-grow-1 pointer" x-on:click="listaAlcanceLOD(item.id, item.idEspecialidad)" x-text="item.nombre"></span>
+                            <div class="options">
+                                <button type="button" class="btn btn-secondary btn-xs" x-on:click="eliminarEspecialidadBep(item)" title="Eliminar">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+                <template x-if="EspBepIdActivo > 0">
+                    <div class="mt-3">
+                        <button type="button" class="btn btn-orange btn-sm w-100" x-on:click="crearPlantilla()"><i class="bi bi-plus-square"></i> Guardar como Plantilla</button>
+                    </div>
+                </template>
+            </div>
+            <div class="col-md-9">
+                <div class="card border-0 p-3">
+                    <template x-if="EspBepIdActivo == 0">
+                        <div class="alert alert-secondary">
+                            <strong><i class="bi bi-exclamation-circle"></i> Aún no se han registrado Especialidades</strong>
+                        </div>
+                    </template>
+                    <template x-if="EspBepIdActivo > 0">
+                        <div>
+                            <div class="table-responsive bg-white mb-3 scroll scroll-alcance">
+                                <table class="table mb-0">
+                                    <thead class="bg-bep">
+                                        <tr>
+                                            <th width="100">Categoría</th>
+                                            <th width="150">Elemento <span class="pointer icon-plus" x-on:click="agregarElementos()"><i class="bi bi-plus-square"></i></span></th>
+                                            <template x-for="(item, index) in leyendaLOD" :key="index">
+                                                <th x-text="item.nombre" width="10"></th>
+                                            </template>
+                                            <th>Parámetros LOI</th>
+                                            <th>Observación</th>
+                                        </tr>                        
+                                    </thead>
+                                    <tbody class="bg-card">
+                                        <template x-if="detalleLOD.length == 0">
+                                            <tr>
+                                                <td class="text-secondary text-center" :colspan="4 + leyendaLOD.length">
+                                                    <i class="bi bi-exclamation-circle"></i> Esta especialidad aún no tiene elementos configurados
+                                                </td>
+                                            </tr>
+                                        </template>
+                                        <template x-for="(item, index) in detalleLOD" :key="index">
+                                            <tr>
+                                                <template x-if="index === 0 || (detalleLOD[index - 1] && detalleLOD[index - 1].idCategoria !== item.idCategoria)">
+                                                    <td :rowspan="totalElementos(item.idCategoria)" x-text="item.nombreCategoria"></td>
+                                                </template>
+                                                <td>
+                                                    <div class="d-flex justify-content-between align-items-center actions-show">
+                                                        <span x-text="item.nombreElemento"></span>
+                                                        <a class="text-danger pointer action ms-2" x-on:click="eliminarDetalleLOD(item.idDetLod, index)"><i class="bi bi-trash"></i></a>
+                                                    </div>
+                                                </td>
+                                                <template x-for="lod in leyendaLOD">
+                                                    <td class="text-center">
+                                                        <input type="radio" class="form-check-input pointer" :name="`lod-${item.idDetLod}`" :value="lod.id" :checked="item.idLOD == lod.id"  @click="checkLOD(item)" :disabled="!edicionBep" />
+                                                    </td>
+                                                </template>
+                                                <td class="text-center actions-show">
+                                                    <template x-if="item.parametrosLOI">
+                                                        <span class="me-1" x-text="item.parametrosLOI.map(det => det.nombreParLoi).join(', ')"></span>
+                                                    </template>
+                                                    <span class="pointer action" x-on:click="agregarDetalleLOI(item)">
+                                                        <i x-show="!item.parametrosLOI" class="bi bi-plus-square"></i>
+                                                        <i x-show="item.parametrosLOI && item.parametrosLOI.length > 0" class="bi bi-pencil-square"></i>
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <textarea class="form-control" :name="`obs-${item.idDetLod}`" x-model="item.observacion" :title="item.observacion"></textarea>
+                                                </td>
+                                            </tr>
+                                        </template>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div>
+                                <button type="button" class="btn btn-orange btn-sm" x-on:click="guardarDetalleLOD()"><i class="bi bi-save"></i> Guardar</button>
+                                <button type="button" class="btn btn-secondary btn-sm" onclick="irA('home')"><i class="bi bi-arrow-up-left-square"></i> Salir</button>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="modalEspecialidades" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+        <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-14 fw-bold"><i class="bi bi-file-text"></i> Agregar Especialidad</h1>
+                    <button type="button" class="btn-close" x-on:click="cerrarEspecialidades()" aria-label="Close"></button>
+                </div>
+                <div class="modal-body scroll">
+                    <template x-if="especialidadesUncheck.length == 0">
+                        <div class="alert alert-secondary">
+                            <strong><i class="bi bi-exclamation-circle"></i> No existen Especialidades disponibles</strong>
+                        </div>
+                    </template>
+                    <div class="mb-2 fs-13" x-show="especialidadesUncheck.length > 0">
+                        <span class="text-secondary pointer" x-show="checkAll" x-on:click="seleccionarTodo()"><i class="bi bi-check2-square"></i> Seleccionar Todo</span>
+                        <span class="text-danger pointer" x-show="!checkAll" x-on:click="desmarcarTodo()"><i class="bi bi-trash"></i> Desmarcar Todo</span>
+                    </div>
+                    <template x-for="(item, index) in especialidadesUncheck" :key="index">
+                        <div class="d-flex justify-content-between align-items-center bg-light border p-2 mb-2">
+                            <span class="ms-2 fs-13" x-text="item.nombre"></span>
+                            <input type="checkbox" class="form-check-input" :id="'esP_'+item.id" x-on:click="checkEspecialidad(item)">
+                        </div>
+                    </template>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" x-on:click="cerrarEspecialidades()">Cerrar</button>
+                    <button type="button" class="btn btn-orange" x-on:click="guardarEspecialidadesBEP()" >Guardar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="modalElementos" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+        <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-14 fw-bold"><i class="bi bi-file-text"></i> Agregar Elementos</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body scroll">
+                    <template x-if="categoriasUncheck.length == 0">
+                        <div class="alert alert-secondary">
+                            <strong><i class="bi bi-exclamation-circle"></i> No existen Elementos disponibles</strong>
+                        </div>
+                    </template>
+                    <template x-for="(item, index) in categoriasUncheck" :key="index">
+                        <div class="border rounded mb-3 py-1 px-2">
+                            <div class="d-flex justify-content-between">
+                                <div class="flex-grow-1 pointer fs-13 fw-semibold text-orange" x-on:click="item.show=!item.show">
+                                    <i class="bi bi-chevron-right" x-show="!item.show"></i>
+                                    <i class="bi bi-chevron-down" x-show="item.show"></i>
+                                    <span x-text="item.nombre"></span>
+                                </div>
+                                <input type="checkbox" class="form-check-input" :id="'cat_'+item.id" x-on:click="checkCategoria(item)">
+                            </div>
+                            <div class="px-3" x-show="item.show">
+                                <template x-for="i in item.elementos">
+                                    <div class="d-flex justify-content-between border rounded bg-light fs-13 py-1 px-2 mt-2">
+                                        <span x-text="i.nombre"></span>
+                                        <input type="checkbox" class="form-check-input" :id="'ele_'+i.id" x-on:click="checkElemento(item, i)">
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-orange" x-on:click="agregarDetalleLOD()">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalDetalleLOI" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+        <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-14 fw-bold"><i class="bi bi-file-text"></i> Agregar Parámetro</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body scroll">
+                    <div class="mb-3 row">
+                        <label class="col-sm-4 col-form-label"><i class="bi bi-clipboard2-check"></i> Parámetros LOI</label>
+                        <div class="col-sm-8">
+                            <select class="form-select" name="parametros" id="parametros" multiple style="width: 100%;">
+                                <option value="">Elija una opción</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-orange" x-on:click="guardarDetalleLOI()" >Guardar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalPlantilla" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+        <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-14 fw-bold"><i class="bi bi-file-text"></i> Crear Plantilla</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body scroll">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold"><i class="bi bi-journal-check"></i> Nombre <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" name="PlaBepNombre" x-model="Plantilla.PlaBepNombre" placeholder="Ingrese el nombre de la plantilla" maxlength="40" required>
+                    </div>
+                    <p class="text-primary fs-11 mt-3 mb-0"><b>Nota:</b> Solo se guardarán Especialidades, Categorías y Elementos asociados al Tipo de Proyecto seleccionado previamente.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-orange" x-on:click="guardarPlantilla()" >Guardar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="./pages/bep-alcance/bep-alcance.js"></script>

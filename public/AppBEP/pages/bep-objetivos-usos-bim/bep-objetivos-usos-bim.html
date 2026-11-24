@@ -1,0 +1,128 @@
+<div class="usosBim" x-data="usosBim()" x-init="automatico()">
+    <ul class="nav nav-pills">
+        <li class="nav-item me-1" onclick="routeTab('objetivos_cliente')">
+            <a class="nav-link"><i class="bi bi bi-buildings me-2"></i> Objetivos del Cliente</a>
+        </li>
+        <li class="nav-item me-1" onclick="routeTab('objetivos_proyecto')">
+            <a class="nav-link"><i class="bi bi-bullseye me-2"></i> Objetivos del Proyecto</a>
+        </li>
+        <li class="nav-item me-1" onclick="routeTab('objetivos_bim')">
+            <a class="nav-link"><i class="bi bi-building-fill-up"></i> Objetivos BIM</a>
+        </li>
+        <li class="nav-item me-1" onclick="routeTab('objetivos_usosBim')">
+            <a class="nav-link active"><i class="bi bi-building-fill-gear"></i> Usos BIM</a>
+        </li>
+    </ul>
+
+    <div class="bg-grey p-3">
+        <div class="card card-bep card-agregar mb-3">
+            <div class="card-header bg-white py-2 pointer" x-on:click="agregarUsosBim()">
+                <span class="fw-semibold fs-13"><i class="bi bi-plus-square me-2"></i> Agregar Uso BIM</span>
+            </div>
+        </div>
+        
+        <div class="card p-3 border-0 rounded-0">
+            <template x-if="data.length > 0">
+                <table class="table mb-0">
+                    <thead class="bg-bep text-white">
+                        <tr>
+                            <td>Usos BIM</td>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-light">
+                        <template x-for="(item, index) in data" :key="index">
+                            <tr>
+                                <td>
+                                    <div class="d-flex justify-content-between align-items-center actions-show">
+                                        <span x-text="item.nombre" x-show="!item.editar"></span>
+                                        <textarea class="form-control form-control-sm" x-show="item.editar" x-model="item.nombre" :id="'nombreOB_'+item.id" placeholder="Ingrese el nombre del objetivo BIM"></textarea>
+                                        <template x-if="!item.editar">
+                                            <div class="action d-flex ms-2">
+                                                <button type="button" class="btn btn-orange btn-xs me-1" x-on:click="itemEditar(item)" title="Editar">
+                                                    <i class="bi bi-pencil"></i>
+                                                </button>
+                                                <button type="button" class="btn btn-secondary btn-xs me-1" x-on:click="actualizarUsoBimBep(item, false)" title="Eliminar">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </div>
+                                        </template>
+                                        <template x-if="item.editar">
+                                            <div class="d-flex ms-2">
+                                                <button type="button" class="btn btn-orange btn-xs me-1" x-on:click="actualizarUsoBimBep(item)" title="Guardar">
+                                                    <i class="bi bi-save"></i>
+                                                </button>
+                                                <button type="button" class="btn btn-secondary btn-xs me-1" x-on:click="cancelarEditar(item, false)" title="Cancelar">
+                                                    <i class="bi bi-x-circle"></i>
+                                                </button>
+                                            </div>
+                                        </template>
+                                    </div>
+                                </td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+            </template>
+
+            <template x-if="data.length == 0">
+                <div class="alert alert-secondary">
+                    <strong><i class="bi bi-exclamation-circle"></i> Aún no se han registrado Usos BIM para este proyecto</strong>
+                </div>
+            </template>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalUsosBim" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+        <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-6 fw-bold"><i class="bi bi-file-text"></i> Agregar Uso BIM</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body scroll">
+                    <ul class="nav nav-tabs nav-justified" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button type="button" class="nav-link active fw-semibold fs-14" data-bs-target="#tab_seleccionar" data-bs-toggle="tab" role="tab" x-on:click="tabCrear = false">Seleccionar Uso BIM</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button type="button" class="nav-link fw-semibold fs-14" data-bs-target="#tab_crear" data-bs-toggle="tab" role="tab" x-on:click="tabCrear = true">Crear Uso BIM </button>
+                        </li>
+                    </ul>
+                    <div class="tab-content">
+                        <div class="tab-pane fade show active p-3" id="tab_seleccionar" role="tabpanel">
+                            <template x-if="usosBimUncheck.length == 0">
+                                <div class="alert alert-secondary">
+                                    <strong><i class="bi bi-exclamation-circle"></i> No existen Usos BIM disponibles</strong>
+                                </div>
+                            </template>
+                            <div class="mb-2 fs-15" x-show="usosBimUncheck.length > 0">
+                                <span class="text-secondary pointer" x-show="checkAll" x-on:click="seleccionarTodo()"><i class="bi bi-check2-square"></i> Seleccionar Todo</span>
+                                <span class="text-danger pointer" x-show="!checkAll" x-on:click="desmarcarTodo()"><i class="bi bi-trash"></i> Desmarcar Todo</span>
+                            </div>
+                            <template x-for="(item, index) in usosBimUncheck" :key="index">
+                                <div class="d-flex justify-content-between align-items-center bg-light border p-2 mb-2">
+                                    <span class="ms-2 fs-14" x-text="item.nombre"></span>
+                                    <input type="checkbox" class="form-check-input" :id="'uB_'+item.id" x-on:click="checkUsoBim(item)">
+                                </div>
+                            </template>
+                        </div>
+                        <div class="tab-pane fade p-3" id="tab_crear" role="tabpanel">
+                            <div class="mb-3 row">
+                                <label class="col-sm-2 col-form-label"><i class="bi bi-journal-check"></i> Uso BIM <span class="text-danger">*</span></label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control" placeholder="Ingrese el Uso BIM" id="UsoBimBepNombre" autocomplete="off" maxlength="100">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-orange" x-on:click="guardarUsoBim()" >Guardar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="./pages/bep-objetivos-usos-bim/bep-objetivos-usos-bim.js"></script>

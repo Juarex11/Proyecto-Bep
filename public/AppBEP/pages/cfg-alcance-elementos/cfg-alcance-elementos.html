@@ -1,0 +1,150 @@
+<div class="elementos" x-data="elementos()" x-init="automatico()">
+    <ul class="nav nav-pills">
+        <li class="nav-item me-1" onclick="routeTabConfig('alcance_especialidades')">
+            <a class="nav-link"><i class="bi bi-diagram-3 me-2"></i> Especialidades</a>
+        </li>
+        <li class="nav-item me-1" onclick="routeTabConfig('alcance_categorias')">
+            <a class="nav-link"><i class="bi bi-tags"></i> Categorías</a>
+        </li>
+        <li class="nav-item me-1" onclick="routeTabConfig('alcance_elementos')">
+            <a class="nav-link active"><i class="bi bi-box"></i> Elementos</a>
+        </li>
+        <li class="nav-item me-1" onclick="routeTabConfig('alcance_lod')">
+            <a class="nav-link"><i class="bi bi-layers"></i> LOD</a>
+        </li>
+        <li class="nav-item me-1" onclick="routeTabConfig('alcance_parametros')">
+            <a class="nav-link"><i class="bi bi-sliders"></i> Parámetros</a>
+        </li>
+    </ul>
+    <div class="bg-grey p-3">
+        <div class="card card-bep card-agregar mb-3">
+            <div class="card-header d-flex align-items-center bg-white pointer" x-on:click="showNew = !showNew">
+                <span class="flex-grow-1 fw-semibold fs-13" :class="{'text-orange': showNew}">
+                    <span x-show="campos.EleId == 0"><i class="bi bi-plus-square me-2"></i> Agregar Elemento</span>
+                    <span x-show="campos.EleId > 0"><i class="bi bi-pencil me-2"></i> Editar Elemento</span>
+                </span>
+                <span x-show="!showNew"><i class="bi bi-chevron-down"></i></span>
+                <span x-show="showNew"><i class="bi bi-chevron-up"></i></span>
+            </div>
+            <div x-bscollapse="showNew">
+                <div class="card-body">
+                    <form @submit.prevent="guardarElemento()" @keydown.enter.prevent>
+                    <div class="mb-3 row">
+                        <label class="col-sm-2 col-form-label"><i class="bi bi-journal-check"></i> Nombre Elemento <span class="text-danger">*</span></label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" placeholder="Ingrese el nombre del Elemento" name="EleNombre" x-model="campos.EleNombre" autocomplete="off" maxlength="40" required>
+                        </div>
+                    </div>
+                    <div class="mb-3 row">
+                        <label class="col-sm-2 col-form-label"><i class="bi bi-bookmark"></i> Tipo <span class="text-danger">*</span></label>
+                        <div class="col-sm-4">
+                                <select class="form-select" name="TipoBepId" x-model="TipoBepId" x-on:change="listaEspecialidadesForm()" required>
+                                <option value="">Seleccionar</option>
+                                <template x-for="(item, index) in tiposBEP" :key="index">
+                                    <option :value="item.id" x-text="item.nombre"></option>
+                                </template>
+                            </select>
+                        </div>
+                        <label class="col-sm-2 col-form-label"><i class="bi bi-calendar-event"></i> Especialidad <span class="text-danger">*</span></label>
+                        <div class="col-sm-4">
+                            <select class="form-select" name="EspId" x-model="EspId" x-on:change="listaCategoriasForm()" required>
+                                <option value="">Seleccione una opción</option>
+                                <template x-for="(item, index) in especialidadesForm" :key="index">
+                                    <option :value="item.id" x-text="item.nombre"></option>
+                                </template>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mb-3 row">
+                        <label class="col-sm-2 col-form-label"><i class="bi bi-calendar-event"></i> Categoría <span class="text-danger">*</span></label>
+                        <div class="col-sm-4">
+                            <select class="form-select" name="CatEleId" x-model="campos.CatEleId" required>
+                                <option value="">Seleccione una opción</option>
+                                <template x-for="(item, index) in categoriasForm" :key="index">
+                                    <option :value="item.id" x-text="item.nombre"></option>
+                                </template>
+                            </select>
+                        </div>
+                        <label class="col-sm-2 col-form-label"><i class="bi bi-building"></i> Default <span class="text-danger">*</span></label>
+                        <div class="col-sm-4">
+                            <select class="form-select" name="EleDefault" x-model="campos.EleDefault" required>
+                                <option value="true">Sí</option>
+                                <option value="false">No</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mb-3 row">
+                        <label class="col-sm-2 col-form-label"><i class="bi bi-calendar-event"></i> Estado <span class="text-danger">*</span></label>
+                        <div class="col-sm-4">
+                            <select class="form-select" name="EleEstado" x-model="campos.EleEstado" required>
+                                <option value="true">Activo</option>
+                                <option value="false">Inactivo</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div>
+                        <button type="submit" class="btn btn-orange btn-sm"><i class="bi bi-save"></i> Guardar</button>
+                        <button type="button" class="btn btn-secondary btn-sm" x-on:click="cancelarElemento()"><i class="bi bi-arrow-up-left-square"></i> Cancelar</button>
+                    </div>
+                </form>
+                </div>
+            </div>
+        </div>
+        <div class="card border-0">
+            <div class="card-body">
+                <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+                    <span class="fw-semibold fs-13 text-orange me-auto"><i class="bi bi-list-task me-2"></i> Lista de Elementos</span>
+                    <div class="input-group input-group-sm w-auto">
+                        <span class="input-group-text">Estado</span>
+                        <select class="form-select" x-model="pag.estado" x-on:change="listaElementos()">
+                            <option value="true">Activo</option>
+                            <option value="false">Inactivo</option>
+                        </select>
+                    </div>
+                    <div class="input-group input-group-sm w-auto">
+                        <span class="input-group-text">Tipo</span>
+                        <select class="form-select" x-model="pag.tipoBep" x-on:change="listaEspecialidades(); listaElementos()"> 
+                            <option value="0">Todos</option>
+                            <template x-for="(item, index) in tiposBEP" :key="index">
+                                <option :value="item.id" x-text="item.nombre"></option>
+                            </template>
+                        </select>
+                    </div>
+                    <div class="input-group input-group-sm w-auto">
+                        <span class="input-group-text">Especialidad</span>
+                        <select class="form-select" x-model="pag.espId" x-on:change="listaCategorias(); listaElementos()">
+                            <option value="0">Todos</option>
+                            <template x-for="(item, index) in especialidades" :key="index">
+                                <option :value="item.id" x-text="item.nombre"></option>
+                            </template>
+                        </select>
+                    </div>
+                    <div class="input-group input-group-sm w-auto">
+                        <span class="input-group-text">Categoría</span>
+                        <select class="form-select" x-model="pag.catId" x-on:change="listaElementos()">
+                            <option value="0">Todos</option>
+                            <template x-for="(item, index) in categorias" :key="index">
+                                <option :value="item.id" x-text="item.nombre"></option>
+                            </template>
+                        </select>
+                    </div>
+                </div>
+                <div x-tabla="{
+                    rows: data,
+                    orden: [[0, 'asc']],
+                    cols: [
+                        { t: 'Nombre Elemento', c: 'nombre', cls: 'fw-semibold' },
+                        { t: 'Tipo', c: 'tipoBep' },
+                        { t: 'Especialidad', c: 'especialidad' },
+                        { t: 'Categoria', c: 'categoria' },
+                        { t: 'Default', c: 'default', tipo: 'sino' },
+                        { t: 'Estado', c: 'estado', tipo: 'estado' }
+                    ],
+                    acciones: { editar: (item) => editarElemento(item), eliminar: (item) => eliminarElemento(item) }
+                }"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="./pages/cfg-alcance-elementos/cfg-alcance-elementos.js"></script>

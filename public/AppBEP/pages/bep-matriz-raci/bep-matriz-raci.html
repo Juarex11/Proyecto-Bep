@@ -1,0 +1,144 @@
+<div class="raci" x-data="raci()" x-init="automatico()">
+    <ul class="nav nav-pills">
+        <li class="nav-item me-1" onclick="routeTab('matriz_contacto')">
+            <a class="nav-link"><i class="bi bi-people me-2"></i> Contactos Clave</a>
+        </li>
+        <li class="nav-item me-1" onclick="routeTab('matriz_raci')">
+            <a class="nav-link active"><i class="bi bi-grid"></i> Matriz RACI</a>
+        </li>
+    </ul>
+    <div class="bg-grey p-3">
+        <div class="d-flex justify-content-end mb-3">
+            <div class="card d-flex flex-row gap-2 p-2 bg-white border-0 fs-13">
+                <template x-for="(item, index) in leyendaRACI" :key="index">
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="rounded-circle" :style="`background-color: ${item.background}; width: 12px; height: 12px;`"></div>
+                        <span x-text="`${item.abreviacion}: ${item.nombre}`"></span>
+                    </div>
+                </template>
+            </div>
+        </div>
+        <div class="card border-0 p-3">
+            <div class="table-responsive bg-white mb-3 scroll scroll-raci">
+                <table class="table table-bordered mb-0">
+                    <thead class="bg-bep">
+                        <tr>
+                            <th>Actividad</th>
+                            <th>Proceso <span class="pointer icon-plus" x-on:click="agregarSubActividades()"><i class="bi bi-plus-square"></i></span></th>
+                            <template x-for="(item, index) in organizaciones" :key="index">
+                                <th class="text-center" x-text="item.nombre" width="120px"></th>
+                            </template>
+                        </tr>                        
+                    </thead>
+                    <tbody class="bg-card">
+                        <template x-if="data.length == 0">
+                            <tr>
+                                <td class="text-secondary text-center" :colspan="3 + matrizRACI.length">
+                                    <i class="bi bi-exclamation-circle"></i> Aún no se ha configurado la matriz de responsabilidades.
+                                </td>
+                            </tr>
+                        </template>
+                        <template x-for="(item, index) in data" :key="index">
+                            <tr>
+                                <template x-if="index === 0 || (data[index - 1] && data[index - 1].idActividad !== item.idActividad)">
+                                    <td :rowspan="totalSubActividades(item.idActividad)" x-text="item.nombreActividad"></td>
+                                </template>
+                                <td>
+                                    <div class="d-flex justify-content-between align-items-center actions-show">
+                                        <span x-text="item.nombreSubActividad"></span>
+                                        <a class="text-danger pointer action ms-2" x-on:click="eliminarMatrizRACI(item.idMatRaci)"><i class="bi bi-trash"></i></a>
+                                    </div>
+                                </td>
+                                <template x-for="(org, indexOrg) in organizaciones" :key="indexOrg">
+                                    <td class="text-center actions-show">
+                                        <template x-for="(det, indexDet) in getRolRaci(item.detalle, org.id)" :key="indexDet">
+                                            <span class="badge me-1" x-text="det.abreviatura" :style="`background-color: ${det.background};color: ${det.color};`"></span>
+                                        </template>
+                                        <span class="pointer action" x-on:click="agregarDetalleRaci(item.idMatRaci, org.id, item.detalle)">
+                                            <i x-show="totalRolRaci(item.detalle, org.id) == 0" class="bi bi-plus-square"></i>
+                                            <i x-show="totalRolRaci(item.detalle, org.id) > 0" class="bi bi-pencil-square"></i>
+                                        </span>
+                                    </td>
+                                </template>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalSubActividades" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+        <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-14 fw-bold"><i class="bi bi-file-text"></i> Agregar Procesos</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body scroll">
+                    <template x-if="actividadesUncheck.length == 0">
+                        <div class="alert alert-secondary">
+                            <strong><i class="bi bi-exclamation-circle"></i> No existen Procesos disponibles</strong>
+                        </div>
+                    </template>
+                    <template x-for="(item, index) in actividadesUncheck" :key="index">
+                        <div class="border rounded mb-3 py-1 px-2">
+                            <div class="d-flex justify-content-between">
+                                <div class="flex-grow-1 pointer fs-13 fw-semibold text-orange" x-on:click="item.show=!item.show">
+                                    <i class="bi bi-chevron-right" x-show="!item.show"></i>
+                                    <i class="bi bi-chevron-down" x-show="item.show"></i>
+                                    <span x-text="item.nombre"></span>
+                                </div>
+                                <input type="checkbox" class="form-check-input" :id="'act_'+item.id" x-on:click="checkActividad(item)">
+                            </div>
+                            <div class="px-3" x-show="item.show">
+                                <template x-for="i in item.subactividades">
+                                    <div class="d-flex justify-content-between border rounded bg-light fs-13 py-1 px-2 mt-2">
+                                        <span x-text="i.nombre"></span>
+                                        <input type="checkbox" class="form-check-input" :id="'sub_'+i.id" x-on:click="checkSubActividad(item, i)">
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-orange" x-on:click="agregarMatrizRACI()">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalDetalleRaci" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+        <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-14 fw-bold"><i class="bi bi-file-text"></i> Agregar Rol</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body scroll">
+                    <div class="mb-2 fs-13" x-show="leyendaRaciDetalle.length > 0">
+                        <span class="text-secondary pointer" x-show="checkAll" x-on:click="seleccionarTodo()"><i class="bi bi-check2-square"></i> Seleccionar Todo</span>
+                        <span class="text-danger pointer" x-show="!checkAll" x-on:click="desmarcarTodo()"><i class="bi bi-trash"></i> Desmarcar Todo</span>
+                    </div>
+                    <template x-for="(item, index) in leyendaRaciDetalle" :key="index">
+                        <div class="d-flex align-items-center justify-content-between bg-light border p-2 mb-2">
+                            <div class="d-flex align-items-center">
+                                <div class="rounded-circle" :style="`background-color: ${item.background}; width: 12px; height: 12px;`"></div>
+                                <span class="ms-2 fs-13" x-text="item.nombre"></span>
+                            </div>
+                            <input type="checkbox" class="form-check-input" :id="'leyRaci_'+item.id" x-on:click="checkLeyRaciDetalle(item.id)">
+                        </div>
+                    </template>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-orange" x-on:click="guardarLeyRaciDetalle()" >Guardar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="./pages/bep-matriz-raci/bep-matriz-raci.js"></script>

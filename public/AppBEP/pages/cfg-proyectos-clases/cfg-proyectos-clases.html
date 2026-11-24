@@ -1,0 +1,93 @@
+<div class="categorias" x-data="categorias()" x-init="automatico()">
+    <ul class="nav nav-pills">
+        <li class="nav-item me-1" onclick="routeTabConfig('proyectos_tipos')">
+            <a class="nav-link"><i class="bi bi-bookmark me-2"></i> Tipos</a>
+        </li>
+        <li class="nav-item me-1" onclick="routeTabConfig('proyectos_categorias')">
+            <a class="nav-link active"><i class="bi bi-bookmarks"></i> Clases</a>
+        </li>
+        <li class="nav-item me-1" onclick="routeTabConfig('proyectos_usosBim')">
+            <a class="nav-link"><i class="bi bi-building-fill-gear"></i> Usos BIM</a>
+        </li>
+            <li class="nav-item me-1" onclick="routeTabConfig('proyectos_campanas')">
+            <a class="nav-link"><i class="bi bi-archive"></i> Proyectos</a>
+        </li>
+    </ul>
+    <div class="bg-grey p-3">
+        <div class="card card-bep card-agregar mb-3">
+            <div class="card-header d-flex align-items-center bg-white pointer" x-on:click="showNew = !showNew">
+                <span class="flex-grow-1 fw-semibold fs-13" :class="{'text-orange': showNew}">
+                    <span x-show="campos.CatBepId == 0"><i class="bi bi-plus-square me-2"></i> Agregar Clase</span>
+                    <span x-show="campos.CatBepId > 0"><i class="bi bi-pencil me-2"></i> Editar Clase</span>
+                </span>
+                <span x-show="!showNew"><i class="bi bi-chevron-down"></i></span>
+                <span x-show="showNew"><i class="bi bi-chevron-up"></i></span>
+            </div>
+            <div x-bscollapse="showNew">
+                <div class="card-body">
+                    <form @submit.prevent="guardarCategoria()" @keydown.enter.prevent>
+                    <div class="mb-3 row">
+                        <label class="col-sm-2 col-form-label"><i class="bi bi-journal-check"></i> Nombre Clase <span class="text-danger">*</span></label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" placeholder="Ingrese el nombre de la Clase" name="CatBepNombre" x-model="campos.CatBepNombre" autocomplete="off" maxlength="40" required>
+                        </div>
+                    </div>
+                    <div class="mb-3 row">
+                        <label class="col-sm-2 col-form-label"><i class="bi bi-bookmark"></i> Tipo <span class="text-danger">*</span></label>
+                        <div class="col-sm-4">
+                            <select class="form-select" name="TipoBepId" x-model="campos.TipoBepId" required>
+                                <option value="">Seleccionar</option>
+                                <template x-for="(item, index) in tiposBEP" :key="index">
+                                    <option :value="item.id" x-text="item.nombre"></option>
+                                </template>
+                            </select>
+                        </div>
+                        <label class="col-sm-2 col-form-label"><i class="bi bi-calendar-event"></i> Estado <span class="text-danger">*</span></label>
+                        <div class="col-sm-4">
+                            <select class="form-select" name="CatBepEstado" x-model="campos.CatBepEstado" required>
+                                <option value="true">Activo</option>
+                                <option value="false">Inactivo</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div>
+                        <button type="submit" class="btn btn-orange btn-sm"><i class="bi bi-save"></i> Guardar</button>
+                        <button type="button" class="btn btn-secondary btn-sm" x-on:click="cancelarCategoria()"><i class="bi bi-arrow-up-left-square"></i> Cancelar</button>
+                    </div>
+                </form>
+                </div>
+            </div>
+        </div>
+        <div class="card border-0">
+            <div class="card-body">
+                <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+                    <span class="fw-semibold fs-13 text-orange me-auto"><i class="bi bi-list-task me-2"></i> Lista de Clases del Proyecto</span>
+                    <div class="input-group input-group-sm w-auto"><span class="input-group-text">Tipo</span>
+                        <select class="form-select" x-model="pag.tipoBep" x-on:change="listaCategorias()">
+                            <option value="0">Todos</option>
+                            <template x-for="(item, index) in tiposBEP" :key="index">
+                                <option :value="item.id" x-text="item.nombre"></option>
+                            </template>
+                        </select></div>
+                    <div class="input-group input-group-sm w-auto"><span class="input-group-text">Estado</span>
+                        <select class="form-select" x-model="pag.estado" x-on:change="listaCategorias()">
+                            <option value="true">Activo</option>
+                            <option value="false">Inactivo</option>
+                        </select></div>
+                </div>
+                <div x-tabla="{
+                    rows: data,
+                    orden: [[0, 'asc']],
+                    cols: [
+                        { t: 'Nombre Clase', c: 'nombre', cls: 'fw-semibold' },
+                        { t: 'Tipo', c: 'tipoBep' },
+                        { t: 'Estado', c: 'estado', tipo: 'estado' }
+                    ],
+                    acciones: { editar: (item) => editarCategoria(item), eliminar: (item) => eliminarCategoria(item) }
+                }"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="./pages/cfg-proyectos-clases/cfg-proyectos-clases.js"></script>

@@ -1,0 +1,108 @@
+<div class="d-flex flex-column" x-data="home()" x-init="automatico()" style="min-height:calc(100vh - 6.5rem)">
+    <section class="bep-hero">
+        <div class="container-fluid px-3 px-lg-4" style="max-width:1640px">
+            <div class="row align-items-end g-3">
+                <div class="col-lg-6">
+                    <p class="bep-eyebrow mb-1">Mis proyectos</p>
+                    <h1 class="mb-1">Lista de Proyectos BEP</h1>
+                    <p class="text-body-secondary mb-0">Consulta, edita e imprime los planes de ejecución BIM de tu empresa.</p>
+                </div>
+                <div class="col-lg-6">
+                    <form class="bep-buscador ms-lg-auto" role="search" x-on:submit.prevent="listaBEP()">
+                        <i class="bi bi-search"></i>
+                        <input type="search" class="form-control" placeholder="Buscar BEP" name="buscar" aria-label="Buscar BEP" autocomplete="off" x-model="buscar" x-on:input.debounce.500ms="listaBEP()">
+                        <button type="submit" class="btn btn-orange rounded-pill">Buscar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="container-fluid px-3 px-lg-4 bep-card-flota" style="max-width:1640px">
+        <div class="card border-0">
+            <div class="card-body p-3 p-lg-4">
+                <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+                    <h2 class="h5 fw-semibold text-bep mb-0">Proyectos <small class="fw-normal text-body-secondary fs-6 ms-1" x-show="cargado" x-text="data.length + (data.length == 1 ? ' resultado' : ' resultados')"></small></h2>
+                    <button type="button" class="btn btn-orange" onclick="nuevoBEP()"><i class="bi bi-plus-lg"></i> Crear nuevo BEP</button>
+                </div>
+
+                <div x-show="!cargado" class="placeholder-glow" aria-hidden="true">
+                    <template x-for="n in 5" :key="n"><div class="d-flex gap-3 py-3 border-bottom"><span class="placeholder col-3 rounded-pill"></span><span class="placeholder col-2 rounded-pill"></span><span class="placeholder col-2 rounded-pill"></span><span class="placeholder col-1 rounded-pill"></span></div></template>
+                </div>
+
+                <div x-show="cargado && data.length > 0" x-cloak>
+                    <div x-tabla="{
+                        rows: data,
+                        orden: [[0, 'asc']],
+                        buscador: false,
+                        cols: cols(),
+                        acciones: {
+                            imprimir: { fn: (item) => imprimirBep(item.id, item.nombre), icono: 'printer', titulo: 'Imprimir BEP', cls: 'btn-outline-primary' },
+                            ver: { fn: (item) => verBep(item), icono: 'eye', titulo: 'Ver BEP', cls: 'btn-outline-primary', etiqueta: 'Ver' },
+                            editar: { fn: (item) => editarBep(item), icono: 'pencil', titulo: 'Editar BEP', cls: 'btn-orange', etiqueta: 'Editar' }
+                        }
+                    }"></div>
+                </div>
+
+                <div class="bep-vacio text-center py-5" x-show="cargado && data.length == 0" x-cloak>
+                    <div class="bep-vacio-ico"><i class="bi bi-journal-check"></i></div>
+                    <h3 class="h5 fw-semibold text-bep" x-text="buscar ? 'No encontramos resultados' : 'Aún no hay proyectos BEP'"></h3>
+                    <p class="text-body-secondary mb-3" x-text="buscar ? 'Prueba con otro nombre, cliente o proyecto.' : 'Crea tu primer plan de ejecución BIM para empezar.'"></p>
+                    <button type="button" class="btn btn-orange" onclick="nuevoBEP()" x-show="!buscar"><i class="bi bi-plus-lg"></i> Crear nuevo BEP</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+<div class="modal fade" id="modalRevisiones" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+        <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-14 fw-bold">
+                        <i class="bi bi-file-text"></i> Revisiones : <span id="bepText"></span>
+                    </h1>
+                    <span class="btn-close pointer" data-bs-dismiss="modal" aria-label="Close"></span>
+                </div>
+                <div class="modal-body scroll">
+                    <div class="input-group mb-3">
+                        <span class="input-group-text fw-bold"><i class="bi bi-file-text me-1"></i> Revisiones</span>
+                        <select class="form-select form-select-sm" name="RevProId" id="RevProId" x-on:change="getEtapas()">
+                            <template x-for="(item, index) in revisiones" :key="index">
+                                <option :value="item.id" x-text="item.nombre"></option>
+                            </template>
+                        </select>
+                        <button type="button" class="btn btn-orange btn-xss" x-on:click="imprimirRevisionEtapa()" title="Imprimir Revision"><i class="bi bi-printer"></i> Imprimir</button>
+                    </div>
+                    <div class="row">
+                        <template x-for="(item, index) in etapas" :key="index">
+                            <div class="col-md-6">
+                                <div class="card mb-3">
+                                    <div class="card-body">
+                                        <p class="fs-13 fw-bold">
+                                            <span>Etapa:</span> 
+                                            <span x-text="item.nombre"></span> 
+                                            <i class="bi bi-check-circle text-success" title="Etapa Actual" x-show="item.actual == true"></i>
+                                        </p>
+                                        <p class="fs-11 mb-1">
+                                            <span><i class="bi bi-calendar"></i> Creación:</span> 
+                                            <span x-text="obtenerFechaAmericana(item.fechaCreacion)"></span>
+                                        </p>
+                                        <p class="fs-11">
+                                            <span><i class="bi bi-calendar"></i> Actualización:</span> 
+                                            <span x-text="obtenerFechaAmericana(item.fechaActualizacion)"></span>
+                                        </p>
+                                        <button class="btn btn-orange btn-xs" x-on:click="imprimirRevisionEtapa(item.id)" title="Imprimir Etapa"><i class="bi bi-printer"></i> Imprimir</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="contentPDF" style="display: none;"> </div>
+    <iframe id="iframePDF" class="iframePDF" style="display: none;"></iframe>
+</div>
+<script src="./pages/home/home.js"></script>

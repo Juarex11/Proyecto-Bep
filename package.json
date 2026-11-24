@@ -1,0 +1,24 @@
+{
+  "name": "bep-backnode",
+  "version": "1.0.0",
+  "description": "Backend Node.js para AppBEP (reemplaza al backend GeneXus). SQL Server en produccion, SQLite opcional para demo.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "gen:sql": "node tools/gen-sql.js",
+    "db:init": "node tools/run-sql.js sql/BEP_Completo.sql",
+    "seed:demo": "node tools/seed-demo.js",
+    "test": "node test/smoke.js",
+    "service:install": "node tools/servicio-windows.js instalar",
+    "service:uninstall": "node tools/servicio-windows.js desinstalar"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "mssql": "^11.0.1",
+    "node-windows": "^1.0.0-beta.8"
+  }
+}

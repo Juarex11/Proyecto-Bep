@@ -1,0 +1,169 @@
+<div class="fTrabajo" x-data="fTrabajo()" x-init="automatico()">
+    <ul class="nav nav-pills">
+        <li class="nav-item me-1" onclick="routeTab('estrategiaInformacion_hitosConstruccion')">
+            <a class="nav-link"><i class="bi bi-building me-2"></i> Hitos de construcción</a>
+        </li>
+        <li class="nav-item me-1" onclick="routeTab('estrategiaInformacion_hitosEntrega')">
+            <a class="nav-link"><i class="bi bi-send-check me-2"></i> Hitos de entrega de información</a>
+        </li>
+        <li class="nav-item me-1" onclick="routeTab('estrategiaInformacion_flujoTrabajo')">
+            <a class="nav-link active"><i class="bi bi-arrow-repeat"></i> Flujo de trabajo</a>
+        </li>
+        <li class="nav-item me-1" onclick="routeTab('estrategiaInformacion_entornoComunDatos')">
+            <a class="nav-link"><i class="bi bi-cloud-arrow-up"></i> Entorno Común de Datos (CDE)</a>
+        </li>
+    </ul>
+
+    <div class="bg-grey p-3">
+        <div class="card card-bep card-agregar mb-3">
+            <div class="card-header d-flex align-items-center bg-white py-2 pointer" x-on:click="showNew = !showNew">
+                <span class="flex-grow-1 fw-semibold fs-13" :class="{'text-orange': showNew}"><i class="bi bi-plus-square me-2"></i> Agregar flujo de trabajo</span>
+                <span x-show="!showNew"><i class="bi bi-chevron-down"></i></span>
+                <span x-show="showNew"><i class="bi bi-chevron-up"></i></span>
+            </div>
+            <div class="card-body" x-show="showNew">
+                <form @submit.prevent="guardarFTrabajo()" @keydown.enter.prevent>
+                    <div class="mb-3 row">
+                        <label class="col-sm-2 col-form-label"><i class="bi bi-journal-check"></i> Nombre del recurso <span class="text-danger">*</span></label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" placeholder="Ingrese el nombre del recurso" name="RecNombre" x-model="campos.RecNombre" autocomplete="off" maxlength="255" required>
+                        </div>
+                    </div>
+                    <div class="mb-3 row">
+                        <label class="col-sm-2 col-form-label"><i class="bi bi-link-45deg"></i> Url del archivo </label>
+                        <div class="col-sm-10">
+                            <input type="url" class="form-control" placeholder="Ingrese la URL del archivo" name="RecUrl" x-model="campos.RecUrl" autocomplete="off" maxlength="1000">
+                        </div>
+                    </div>
+                    <div class="mb-3 row">
+                        <label class="col-sm-2 col-form-label"><i class="bi bi-link-45deg"></i> Archivo </label>
+                        <div class="col-sm-10">
+                            <input type="file" id="file" class="form-control" multiple accept=".pdf,.jpg,.png,.doc,.docx, .xlsx, .xls"/>
+                        </div>
+                    </div>  
+                    <div>
+                        <button type="submit" class="btn btn-orange btn-sm"><i class="bi bi-save"></i> Guardar</button>
+                        <button type="button" class="btn btn-secondary btn-sm" x-on:click="cancelarFTrabajo()"><i class="bi bi-arrow-up-left-square"></i> Cancelar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="card p-3 border-0 rounded-0">
+            <template x-if="data.length > 0">
+                <table class="table mb-0">
+                    <thead class="bg-bep text-white">
+                        <tr>
+                            <td>Nombre Recurso</td>
+                            <td>Enlace</td>
+                            <td>Archivos</td>
+                            <td>Subido por</td>
+                            <td>Fecha Creación</td>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-light">
+                        <template x-for="(item, index) in data" :key="index">
+                            <tr>
+                                <td>
+                                    <span x-text="item.nombre" x-show="!item.editar"></span>
+                                    <input class="form-control form-control-sm" x-show="item.editar" x-model="item.nombre" placeholder="Ingrese el nombre del archivo">
+                                </td>
+                                <td>
+                                    <span x-text="item.url" x-show="!item.editar"></span>
+                                    <input class="form-control form-control-sm" x-show="item.editar" x-model="item.url" placeholder="Ingrese la URL del archivo">
+                                </td>
+                                <td>
+                                    <span class="pointer fw-bold text-secondary" title="Ver Archivos" x-on:click="verArchivos(item)"><i class="bi bi-eye"></i> Ver </span>
+                                </td>
+                                <td x-text="item.personalNombre"></td>
+                                <td>
+                                    <div class="d-flex justify-content-between align-items-center actions-show">
+                                        <span x-text="obtenerFechaAmericana(item.fecha)"></span>                                
+                                        <template x-if="!item.editar">
+                                            <div class="action d-flex ms-2">
+                                                <button type="button" class="btn btn-orange btn-xs me-1" x-on:click="itemEditar(item)" title="Editar">
+                                                    <i class="bi bi-pencil"></i>
+                                                </button>
+                                                <button type="button" class="btn btn-secondary btn-xs me-1" x-on:click="actualizarFTrabajo(item, false)" title="Eliminar">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </div>
+                                        </template>
+                                        <template x-if="item.editar">
+                                            <div class="d-flex ms-2">
+                                                <button type="button" class="btn btn-orange btn-xs me-1" x-on:click="actualizarFTrabajo(item)" title="Guardar">
+                                                    <i class="bi bi-save"></i>
+                                                </button>
+                                                <button type="button" class="btn btn-secondary btn-xs me-1" x-on:click="cancelarEditar(item, false)" title="Cancelar">
+                                                    <i class="bi bi-x-circle"></i>
+                                                </button>
+                                            </div>
+                                        </template>
+                                    </div>
+                                </td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+            </template>
+
+            <template x-if="data.length == 0">
+                <div class="alert alert-secondary">
+                    <strong><i class="bi bi-exclamation-circle"></i> Aún no se han registrado flujos de trabajo para este proyecto</strong>
+                </div>
+            </template>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalArchivos" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+        <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-14 fw-bold"><i class="bi bi-file-text"></i> Archivos</h1>
+                    <span class="btn-close pointer" data-bs-dismiss="modal" aria-label="Close"></span>
+                </div>
+                <div class="modal-body scroll">
+                    <div class="mb-3">
+                        <input type="file" id="newfiles" class="form-control d-none" multiple accept=".pdf,.jpg,.png,.doc,.docx, .xlsx, .xls" x-ref="fileInput" @change="handleFiles($event)"/>
+                        <button type="button" class="btn btn-orange btn-sm" @click="$refs.fileInput.click()"><i class="bi bi-plus-square"></i> Agregar</button>
+                    </div>
+                    <template x-if="(archivos.length + newFiles.length) == 0">
+                        <div class="alert alert-secondary">
+                            <strong><i class="bi bi-exclamation-circle"></i> No hay archivos para este recurso</strong>
+                        </div>
+                    </template>
+                    <table class="table mb-0">
+                        <tbody class="bg-light">
+                            <template x-for="(item, index) in archivos" :key="index">
+                                <tr>
+                                    <td>
+                                        <a :href="url+item.ruta" class="text-primary" target="_blank">Ver recurso</a>
+                                    </td>
+                                    <td x-text="item.nombre"></td>
+                                    <td x-text="item.tipo"></td>
+                                    <td x-text="item.peso"></td>
+                                    <td><button type="button" class="btn btn-secondary btn-xs" @click="quitarArchivo(index)"><i class="bi bi-trash"></i></button></td>
+                                </tr>
+                            </template>
+                            <template x-for="(item, index) in newFiles" :key="index">
+                                <tr>
+                                    <td><a :href="getFileURL(item.file)" class="text-primary" target="_blank">Ver recurso</a></td>
+                                    <td x-text="item.file.name"></td>
+                                    <td x-text="item.file.type"></td>
+                                    <td x-text="formatSize(item.file.size)"></td>
+                                    <td><button type="button" class="btn btn-secondary btn-xs" @click="removeFile(index)"><i class="bi bi-trash"></i></button></td>
+                                </tr>
+                            </template>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-orange" x-on:click="actualizarArchivos()">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="./pages/bep-estrategia-informacion-flujo-trabajo/bep-estrategia-informacion-flujo-trabajo.js"></script>

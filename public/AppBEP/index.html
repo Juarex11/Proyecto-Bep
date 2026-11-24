@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <script>try { if (localStorage.getItem("bep_tema") === "dark") document.documentElement.setAttribute("data-bs-theme", "dark"); } catch (e) {}</script>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>BEPcloud · Plan de Ejecución BIM (BEP)</title>
+        <link rel="icon" type="image/png" href="img/favicon.png">
+        <link rel="shortcut icon" href="img/favicon.ico">
+        <link rel="stylesheet" href="css/bootstrap.min.css">
+        <link rel="stylesheet" href="css/bootstrap-icons.min.css">
+        <link rel="stylesheet" href="css/select2.min.css"/>
+        <link rel="stylesheet" href="css/vendor/dataTables.bootstrap5.min.css">
+        <link rel="stylesheet" href="css/vendor/responsive.bootstrap5.min.css">
+        <link rel="stylesheet" href="css/vendor/buttons.bootstrap5.min.css">
+        <link rel="stylesheet" href="css/app.css">
+        <link rel="stylesheet" href="css/bep-bootstrap.css">
+
+        <script src="js/vendor/alpine.min.js" defer></script>
+    </head>
+    <body>
+        <div id="navbar"></div>
+        <main id="root" class="fade bep-fade"></main>
+
+        <footer class="bep-footer">
+            <div class="w-100 mx-auto px-3 px-lg-4 d-flex align-items-center justify-content-between gap-3" style="max-width:1640px">
+                <span class="text-truncate">Impulsando la metodología <b>VDC</b> en la industria AEC</span>
+                <span class="text-nowrap">© <span id="anioFooter"></span> Lyracode · BEPcloud</span>
+            </div>
+        </footer>
+
+        <button type="button" class="bep-ayuda" id="btnAyuda" title="Ayuda" aria-label="Ayuda" onclick="abrirAyuda()"><i class="bi bi-question-lg"></i><span class="bep-ayuda-txt">Pide ayuda aquí</span></button>
+
+        <div class="loading-overlay" id="loading">
+            <div class="text-center">
+                <div class="spinner-border" role="status"><span class="visually-hidden">Cargando . . .</span></div>
+                <div class="mt-2 text-body-secondary fw-medium">Cargando . . .</div>
+            </div>
+        </div>
+        <div id="notifications" class="toast-container position-fixed bottom-0 end-0 p-3 mb-4"></div>
+
+        <!-- Librerias -->
+        <script src="js/vendor/jquery.min.js"></script>
+        <script src="js/vendor/bootstrap.bundle.js"></script>
+        <script src="js/vendor/select2.min.js"></script>
+        <script src="js/vendor/html2pdf.min.js"></script>
+        <script src="js/vendor/datatables/dataTables.min.js"></script>
+        <script src="js/vendor/datatables/dataTables.bootstrap5.min.js"></script>
+        <script src="js/vendor/datatables/dataTables.responsive.min.js"></script>
+        <script src="js/vendor/datatables/responsive.bootstrap5.min.js"></script>
+        <script src="js/vendor/datatables/dataTables.buttons.min.js"></script>
+        <script src="js/vendor/datatables/buttons.bootstrap5.min.js"></script>
+
+        <!-- Aplicacion (el orden importa) -->
+        <script src="js/ui/tablas.js"></script>
+        <script src="js/core/config.js"></script>
+        <script src="js/core/session.js"></script>
+        <script src="js/core/utils.js"></script>
+        <script src="js/ui/ui.js"></script>
+        <script src="js/core/api.js"></script>
+        <script src="js/ui/perfil.js"></script>
+        <script src="js/core/router.js"></script>
+        <script src="js/main.js"></script>
+        <script>document.getElementById('anioFooter').textContent = new Date().getFullYear();</script>
+    </body>
+</html>
